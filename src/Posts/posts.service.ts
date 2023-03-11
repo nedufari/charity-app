@@ -8,12 +8,14 @@ import {Query} from "express-serve-static-core"
 
 @Injectable()
 export class PostsService{
-    constructor( @InjectModel("Posts") private readonly postModel:Model<PostDocument> ){}
+    constructor( @InjectModel("Posts") private readonly postModel:Model<Posts> ){}
 
-   async  createPost( post:PostDto):Promise<Posts>{
+   async  createPost( post:PostDto,user:User):Promise<Posts>{
 
-        const newPost = await new this.postModel(post)
-        return await newPost.save()
+    const data= Object.assign(post,{user: user._id}) //the user data 
+
+        const newPost = await  this.postModel.create(data)
+        return newPost
     }
 
 
@@ -41,6 +43,9 @@ export class PostsService{
     async findone(id:string):Promise<PostDocument>{
         return await this.postModel.findById(id).populate("author").exec()
     }
+
+    
+
 
     async updatePost(id:string ,updatedto:UpdateDto):Promise<PostDocument>{
         let existingPost = await this.findone(id)

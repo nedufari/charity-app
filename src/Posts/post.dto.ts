@@ -1,4 +1,5 @@
-import { IsOptional, IsString ,IsNotEmpty } from "class-validator"
+import { IsOptional, IsString ,IsNotEmpty, IsEmpty } from "class-validator"
+import { User } from "../user/user.schema"
 
 
 export class PostDto{
@@ -13,6 +14,9 @@ export class PostDto{
     @IsString()
     @IsOptional()
     postImage:string
+
+    @IsEmpty({message:"user id canot be passed"})
+    readonly author:User
 }
 
 
@@ -28,4 +32,8 @@ export class UpdateDto{
     @IsString()
     @IsOptional()
     postImage:string
+
+    @IsEmpty({message:"user id canot be passed"})
+    readonly author:User
+
 }

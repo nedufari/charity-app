@@ -8,6 +8,7 @@ import { UserService } from "../user/user.service";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtGuard } from "./guard/authguard";
+import { RoleGuard } from "./guard/roleguards";
 import { JwtStrategy } from "./guard/strategy";
 
 
@@ -16,10 +17,10 @@ import { JwtStrategy } from "./guard/strategy";
     JwtModule.registerAsync({
         useFactory:()=>({
           secret:process.env.KEY,
-          signOptions:{expiresIn:'3600s'}
+          signOptions:{expiresIn:'259200s'} //3days 
         })
       })],
-    providers:[AuthService, UserService,JwtStrategy,JwtGuard],
+    providers:[AuthService, UserService,JwtStrategy,JwtGuard,RoleGuard],
     controllers:[AuthController],
 })
 export class AuthModule{}

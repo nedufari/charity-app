@@ -15,8 +15,8 @@ export class Blood{
     // @Prop()
     // date:Date
 
-    @Prop()
-    donor:User //donor of the blood pile 
+    // @Prop()
+    // donor:User //donor of the blood pile 
     
 }
 

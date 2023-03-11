@@ -6,6 +6,7 @@ import * as bcrypt from "bcrypt"
 import { UserDetails } from "./user.interface";
 import { UpdateUserDto } from "./user.dto";
 import {Query} from "express-serve-static-core"
+import { of } from "rxjs";
 
 @Injectable()
 export class UserService{
@@ -36,7 +37,7 @@ export class UserService{
 //    }
 
    async finduserByemail(email:string):Promise<UserDocument|null>{
-        return await this.usermodel.findOne({email}).populate("post").exec()
+        return await this.usermodel.findOne({email}).exec()
    }
 
    async finduserByid(id:string):Promise<UserDocument|null>{
@@ -74,18 +75,36 @@ export class UserService{
                 $regex:query.keyword,
                 $options:'i'
             },
-          
-             
-        
+    }:{}
 
-        }:{}
+
+        return await  this.usermodel.find({...keyword}).skip(skip).limit(respage).exec()
+    }
+
+
+    async searchuserbyemail(query:Query):Promise<UserDocument[]>{
+
+        const respage=2
+        const curretpage =Number(query.page) || 1
+        const skip =respage *(curretpage -1)
+
+
+        const keyword= query.keyword ? {
+            email:{
+                $regex:query.keyword,
+                $options:'i'
+            },
+    }:{}
 
 
         return await  this.usermodel.find({...keyword}).skip(skip).limit(respage).exec()
     }
 
     async getalluser():Promise<UserDocument[]>{
-        return await this.usermodel.find()
-    
-    }
+        return await this.usermodel.find().populate("post").exec()
+     }
+
+   
+
+
 }

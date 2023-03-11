@@ -1,11 +1,16 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document } from "mongoose";
+import { Blood } from "../blood/blood.schema";
+import { Comment } from "../comment/comment.schema";
+import { Money } from "../money/money.schema";
 import { Posts } from "../Posts/post.schema";
+import { ReliefMAterial } from "../reliefmaterials/relief.schema";
+import { Reply } from "../reply/reply.schema";
 import { Roles } from "./roles.enum";
 
 export type UserDocument = User & Document
 @Schema({timestamps:true})
-export class User{
+export class User extends Document{
 
     /////////////////////////////////////////// shared schema for all forms of user 
     @Prop({required:true})
@@ -23,7 +28,7 @@ export class User{
     @Prop()
     phone:string
 
-    @Prop({ enum:Roles, default:Roles.AGENCY})
+    @Prop({ enum:Roles, default:Roles.ADMIN})
     role:Roles
     /////////////////////////////////////////////// agency info 
 
@@ -42,8 +47,27 @@ export class User{
     @Prop({length:10})
     account2:string
 
-    // @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Posts'}]})
-    // post:Posts[]
+    @Prop()
+    imagePath :string
+
+    // relationships with various tables 
+    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Posts'}]})
+    post:Posts[]
+
+    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Comment'}]})
+    comment:Comment[]
+
+    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Reply'}]})
+    replies:Reply[]
+
+    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Blood'}]})
+    bloodDoation:Blood[]
+
+    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'ReliefMaterial'}]})
+    relifMatrials:ReliefMAterial[]
+
+    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Money'}]})
+    moneyDonations:Money[]
 
 }
 

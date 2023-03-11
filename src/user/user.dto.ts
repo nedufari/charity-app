@@ -1,4 +1,5 @@
 import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from "class-validator"
+import { Posts } from "../Posts/post.schema"
 import { Roles } from "./roles.enum"
 
 
@@ -48,6 +49,13 @@ export class UpdateUserDto{
     @IsEnum({Roles})
     @IsOptional()
     role:Roles
+
+    @IsString()
+    @IsOptional()
+    imagepath:string
+
+    @IsOptional()
+    posts:Posts[]
 }
 
 ///// response or output dto 

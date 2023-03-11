@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { User } from "../user/user.schema";
 import { PostCommentDto } from "./comment.dto";
 import { CommentDcument } from "./comment.schema";
 
@@ -10,9 +11,11 @@ export class CommentService{
 
     }
 
-    comment (commentdto:PostCommentDto ):Promise <CommentDcument>{
-        const newComment = new this.commentmodel(commentdto)
-        return newComment.save()
+    comment (commentdto:PostCommentDto, user:User ):Promise <CommentDcument>{
+
+        const data= Object.assign(commentdto,{user: user._id}) //the user dat
+        const newComment =  this.commentmodel.create(data)
+        return newComment
     }
 
 
@@ -21,7 +24,7 @@ export class CommentService{
     // }
 
     findallcommentbyid(id:string):Promise<CommentDcument>{
-        return this.commentmodel.findById(id).exec()
+        return this.commentmodel.findById(id).populate("author").exec()
     }
 
     
