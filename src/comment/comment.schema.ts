@@ -6,18 +6,15 @@ import { User } from "../user/user.schema";
 export type CommentDcument =Comment & Document
 
 @Schema({timestamps:true})
-export class Comment extends Document{
+export class Comment{
     @Prop()
     comment:string
 
-    @Prop()
-    reply:string 
 
     @Prop({type:mongoose.Schema.Types.ObjectId, ref:User.name})
-    author:User
+    author:any
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:User.name})
-    post:Posts
+    
 
 
 

@@ -5,35 +5,28 @@ import { User } from "../user/user.schema"
 export class PostDto{
     @IsString()
     @IsNotEmpty()
-    header:string 
+    content:string 
 
-    @IsString()
-    @IsNotEmpty()
-    caption:string
 
     @IsString()
     @IsOptional()
     postImage:string
 
-    @IsEmpty({message:"user id canot be passed"})
-    readonly author:User
+    
 }
 
 
 export class UpdateDto{
     @IsString()
     @IsOptional()
-    header:string 
+    content:string 
 
-    @IsString()
-    @IsOptional()
-    caption:string
+   
 
     @IsString()
     @IsOptional()
     postImage:string
 
-    @IsEmpty({message:"user id canot be passed"})
-    readonly author:User
+    
 
 }

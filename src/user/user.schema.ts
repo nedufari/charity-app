@@ -5,12 +5,12 @@ import { Comment } from "../comment/comment.schema";
 import { Money } from "../money/money.schema";
 import { Posts } from "../Posts/post.schema";
 import { ReliefMAterial } from "../reliefmaterials/relief.schema";
-import { Reply } from "../reply/reply.schema";
+
 import { Roles } from "./roles.enum";
 
 export type UserDocument = User & Document
 @Schema({timestamps:true})
-export class User extends Document{
+export class User {
 
     /////////////////////////////////////////// shared schema for all forms of user 
     @Prop({required:true})
@@ -28,7 +28,7 @@ export class User extends Document{
     @Prop()
     phone:string
 
-    @Prop({ enum:Roles, default:Roles.ADMIN})
+    @Prop({ enum:Roles, default:Roles.AGENCY})
     role:Roles
     /////////////////////////////////////////////// agency info 
 
@@ -51,25 +51,8 @@ export class User extends Document{
     imagePath :string
 
     // relationships with various tables 
-    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Posts'}]})
-    post:Posts[]
-
-    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Comment'}]})
-    comment:Comment[]
-
-    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Reply'}]})
-    replies:Reply[]
-
-    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Blood'}]})
-    bloodDoation:Blood[]
-
-    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'ReliefMaterial'}]})
-    relifMatrials:ReliefMAterial[]
-
-    @Prop({type:[{type:mongoose.Schema.Types.ObjectId, ref:'Money'}]})
-    moneyDonations:Money[]
+   
 
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
-

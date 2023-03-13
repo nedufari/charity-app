@@ -11,36 +11,37 @@ export class CommentService{
 
     }
 
-    comment (commentdto:PostCommentDto, user:User ):Promise <CommentDcument>{
-
-        const data= Object.assign(commentdto,{user: user._id}) //the user dat
-        const newComment =  this.commentmodel.create(data)
-        return newComment
-    }
-
-
-    // findallcomment():Promise<CommentDcument[]>{
-    //     return this.commentmodel.find().exec()
-    // }
-
-    findallcommentbyid(id:string):Promise<CommentDcument>{
-        return this.commentmodel.findById(id).populate("author").exec()
-    }
-
+    async postComment(userId: string, comment: PostCommentDto) {
+        try {
+          let newComment = new this.commentmodel(comment);
+          newComment.author = userId;
+          newComment = await newComment.save();
+          return newComment;
+        } catch (error) {
+          throw error;
+        }
+      }
     
-
-   async updatecommet(id:string, newcomment:PostCommentDto):Promise<CommentDcument>{
-        const existingComment = await  this.findallcommentbyid(id)
-        existingComment.comment= newcomment.comment ?? existingComment.comment
-        return existingComment.save()
+      async deleteComment(commentId: string, userId: string) {
+        try {
+          const deletedComment = await this.commentmodel.findOneAndDelete({
+            _id: commentId,
+            author: userId,
+          });
+          return deletedComment;
+        } catch (error) {
+          throw error;
+        }
+      }
+    
+      async deleteCommentsByIds(commentIds: any[]) {
+        try {
+          const deletedComments = await this.commentmodel.deleteMany()
+            .where('_id')
+            .in(commentIds)
+            .exec();
+        } catch (error) {
+          throw error;
+        }
+      }
     }
-
-   
-
-    async deleteComment(id:string){
-        return await this.commentmodel.deleteOne({_id:id})
-    }
-
-
-}
-

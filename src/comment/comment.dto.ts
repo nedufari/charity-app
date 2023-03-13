@@ -7,10 +7,10 @@ export class PostCommentDto{
     @IsOptional()
     comment :string 
 
-    @IsEmpty({message:"author id is not to be provided "})
-    readonly author:User
+    // @IsEmpty({message:"author id is not to be provided "})
+    // readonly author:User
 
-    @IsEmpty({message:"author id is not to be provided "})
-    readonly post:Posts[]
+    // @IsEmpty({message:"author id is not to be provided "})
+    // readonly post:Posts[]
 }
 
