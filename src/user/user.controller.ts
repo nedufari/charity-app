@@ -1,18 +1,10 @@
 import { Get } from "@nestjs/common";
 import { Patch } from "@nestjs/common";
 import { Controller,Query } from "@nestjs/common";
-import { Body, Param, UseInterceptors } from "@nestjs/common";
-import { UpdateResult } from "typeorm";
+import { Body, Param } from "@nestjs/common";
 import { UpdateUserDto } from "./user.dto";
 import { UserService } from "./user.service";
 import {Query as ExpressQuery} from "express-serve-static-core"
-import { Post } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { UploadedFile } from "@nestjs/common/decorators";
-import { HttpException } from "@nestjs/common/exceptions";
-import { HttpStatus } from "@nestjs/common/enums";
-import { join } from "path";
-import { Observable, of, switchMap } from "rxjs";
 import { UseGuards } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard/authguard";
 import { Role } from "../auth/guard/role.decorator";

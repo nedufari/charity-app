@@ -1,6 +1,6 @@
-import { HttpException, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose, { Model } from "mongoose";
+import { Model } from "mongoose";
 import { User, UserDocument } from "../user/user.schema";
 import { PostDto, UpdateDto } from "./post.dto";
 import { PostDocument, Posts } from "./post.schema";
