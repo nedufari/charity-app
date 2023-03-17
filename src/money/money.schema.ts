@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Date, Document } from "mongoose";
+import mongoose, { Date, Document } from "mongoose";
 import { User } from "../user/user.schema";
 
 export type MoneyDocument = Money & Document
@@ -18,8 +18,8 @@ export class Money{
     @Prop()
     reciept:string //uploaded image as proof of payment 
 
-    @Prop()
-    payer:User //relations to who made the payment 
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:User.name})
+    payer:any 
 }
 
 export const MoneySchema =SchemaFactory.createForClass(Money)

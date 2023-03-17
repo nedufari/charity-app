@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Date, Document } from "mongoose";
+import mongoose, { Date, Document } from "mongoose";
 import { User } from "../user/user.schema";
 
 export type BloodDocument = Blood & Document
@@ -12,11 +12,9 @@ export class Blood{
     @Prop()
     amount:string
 
-    // @Prop()
-    // date:Date
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:User.name})
+    donor:any
 
-    // @Prop()
-    // donor:User //donor of the blood pile 
     
 }
 

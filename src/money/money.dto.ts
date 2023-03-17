@@ -4,7 +4,7 @@ export class MoneydonationDto{ //update
     amount:string
     currecy:string 
     reciept:string
-    date:Date
+    
 
 }
 

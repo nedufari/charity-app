@@ -1,8 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { query, response, Response } from "express";
 import { JwtGuard } from "../auth/guard/authguard";
-import { GetUser } from "../user/user.decorator";
-import { User } from "../user/user.schema";
 import { PostDto,  UpdateDto } from "./post.dto";
 import { PostDocument, Posts } from "./post.schema";
 import { PostsService } from "./posts.service";
@@ -11,12 +9,13 @@ import { RoleGuard } from "../auth/guard/roleguards";
 import { Role } from "../auth/guard/role.decorator";
 import { Roles } from "../user/roles.enum";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import path = require('path');
-import { v4 as uuidv4 } from 'uuid';
-import { join } from "path";
-import { UserService } from "../user/user.service";
 import { PostCommentDto } from "../comment/comment.dto";
+import * as fs from 'fs';
+import { MoneydonationDto } from "../money/money.dto";
+import { BloodDonationDto } from "../blood/blood.dto";
+import { ReliefMaterialDto } from "../reliefmaterials/relief.dto";
+
+
 
 @Controller('posts')
 export class PostsController{
@@ -134,34 +133,106 @@ export class PostsController{
         }
       }
 
-    
      
 
 
+    @UseGuards(JwtGuard,RoleGuard)
+    @Role(Roles.AGENCY, Roles.ADMIN)
+    @Patch("/upload/:postid")
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadimagebypostid(
+      @Req() req,
+      @Param("postid") postid: string,
+      @UploadedFile() file: Express.Multer.File,
+      @Res() res
+    ) {
+      try {
+        const fileBuffer = await fs.promises.readFile(file.path);
+        const fileString = fileBuffer.toString();
+        const newimage = await this.postservice.updateimagebypostid(
+          fileString,
+          req.user.id,
+          postid
+        );
+        res.status(200).json(newimage);
+      } catch (error) {
+        return error;
+      }
+    }
 
 
-      ////comment session
+    
+    @Post("money/:postid")
+    @UseGuards(JwtGuard,RoleGuard)
+    @Role(Roles.DONATORS)
+    async moneydonation(@Request()req, @Res()res:Response, @Body()donations:MoneydonationDto, @Param("postid")postid:string){
+        try {
+            const newcdonation = await this.postservice.makemoeydonations(req.user.id,postid, donations)
+            return res.status(200).json(newcdonation)
+            
+        } catch (error) {
+            throw error
+            
+        }
+    }
 
 
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY,Roles.ADMIN)
-    @Post("/upload")
-    @UseInterceptors(FileInterceptor('image',{storage:diskStorage({
-        destination: "./images",
-        filename:(req, file,callback)=> {
-            const extension :string= path.extname(file.originalname)
-            const fileName :string= uuidv4()+ extension 
-            
-            callback(null, `${fileName}${extension}`)
-        }
-        
-    })}))
-    uploadfile(@Request()req, @UploadedFile()file:Express.Multer.File):Promise<PostDocument>{
-        const updateDto = new UpdateDto();
-        updateDto.postImage = file.filename; // set the postImage property to the filename of the uploaded file
-        return this.postservice.updateimagebyid(req.user._id, updateDto);
-
+    @Role(Roles.DONATORS)
+    @Patch("/upload/reciept/:postid")
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadpaymentrecieptbypostid(
+      @Req() req,
+      @Param("postid") postid: string,
+      @UploadedFile() file: Express.Multer.File,
+      @Res() res
+    ) {
+      try {
+        const fileBuffer = await fs.promises.readFile(file.path);
+        const fileString = fileBuffer.toString();
+        const newimage = await this.postservice.recieptforpayment(
+          fileString,
+          req.user.id,
+          postid
+        );
+        res.status(200).json(newimage);
+      } catch (error) {
+        return error;
+      }
     }
 
+    
+    @Post("blood/:postid")
+    @UseGuards(JwtGuard,RoleGuard)
+    @Role(Roles.AGENCY,Roles.DONATORS)
+    async blooddonation(@Request()req, @Res()res:Response, @Body()blood:BloodDonationDto, @Param("postid")postid:string){
+        try {
+            const newdonation = await this.postservice.blooddonatio(req.user.id,postid,blood)
+            return res.status(200).json(newdonation)
+            
+        } catch (error) {
+            throw error
+            
+        }
+    }
+
+
+    
+    @Post("reliefmaterials/:postid")
+    @UseGuards(JwtGuard,RoleGuard)
+    @Role(Roles.AGENCY,Roles.DONATORS)
+    async ReliefMateriaDonation(@Request()req, @Res()res:Response, @Body()relief:ReliefMaterialDto, @Param("postid")postid:string){
+        try {
+            const newReliefDoations = await this.postservice.reliefmatrialdonations(req.user.id,postid,relief)
+            return res.status(200).json(newReliefDoations)
+            
+        } catch (error) {
+            throw error
+            
+        }
+    }
+
+   
+        
 
 }

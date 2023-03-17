@@ -8,10 +8,15 @@ import { Blood, BloodDocument } from "./blood.schema";
 export class BloodService {
     constructor(@InjectModel("Bloods") private readonly bloodmodel:Model<BloodDocument>){}
 
-    donateblood(blooddto:BloodDonationDto):Promise<BloodDocument>{
-        const newblood = new this.bloodmodel(blooddto)
-        
-        return newblood.save()
+    async donateblood(blooddto:BloodDonationDto, userId:string){
+        try {
+            let newblood = new this.bloodmodel(blooddto);
+            newblood.donor = userId;
+            newblood = await newblood.save();
+            return newblood;
+          } catch (error) {
+            throw error;
+          }
+        }
         
     }
-}

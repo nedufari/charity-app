@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Date, Document } from "mongoose";
+import mongoose, { Date, Document } from "mongoose";
 import { User } from "../user/user.schema";
 
 export type ReliefMaterialDocument = ReliefMAterial & Document
@@ -15,7 +15,7 @@ export class ReliefMAterial{
     // @Prop()
     // date:Date
 
-    @Prop()
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:User.name})
     donor:User //relations with the user 
 }
 

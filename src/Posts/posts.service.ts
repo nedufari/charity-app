@@ -8,16 +8,30 @@ import {Query} from "express-serve-static-core"
 import { UserService } from "../user/user.service";
 import { CommentService } from "../comment/comment.service";
 import { PostCommentDto } from "../comment/comment.dto";
+import { CloudinaryService } from "../cloudinary/cloudinary.service";
+import { MoneydonationDto } from "../money/money.dto";
+import { MoneyService } from "../money/money.service";
+import { BloodService } from "../blood/blood.service";
+import { BloodDonationDto } from "../blood/blood.dto";
+import { ReliefMaterialDto } from "../reliefmaterials/relief.dto";
+import { ReliefMaterialService } from "../reliefmaterials/rellief.service";
 
 @Injectable()
 export class PostsService{
-    constructor( @InjectModel("Posts") private readonly postModel:Model<Posts>,private commentservice:CommentService,
+    constructor( @InjectModel("Posts") private readonly postModel:Model<Posts>,
+    private commentservice:CommentService, 
+    private cloudiaryservice:CloudinaryService,
+    private money:MoneyService,
+    private blood:BloodService,
+    private reliefmaterial:ReliefMaterialService
+    
     ){}
 
    async  createPost( userid:string, postdto:PostDto){
     try {
         const newpost = new this.postModel(postdto)
         newpost.author = userid
+        
         return newpost.save()
         
     } catch (error) {
@@ -25,6 +39,16 @@ export class PostsService{
     }
 
  }
+
+ async updateimagebypostid(postid: string, fileString: Express.Multer.File, userid: string) {
+  try {
+    const updatepostimage = await this.postModel.findOneAndUpdate({ author: userid, _id: postid });
+    return await this.cloudiaryservice.uploadimage(fileString);
+  } catch (error) {
+    return error;
+  }
+}
+
 
 
     async findall(query:Query):Promise<PostDocument[]>{
@@ -58,24 +82,17 @@ export class PostsService{
         try {
             const foundpost = await this.postModel.findOne({author:userid, _id:postid})
             foundpost.content = updatedto.content || foundpost.content
+            // if (updatedto.postImage && foundpost.postImage !== updatedto.postImage ){
+            //   foundpost.postImage=(await this.cloudiaryservice.convertImageToCloudiary(updatedto.postImage)).url
+            // }
             return await foundpost.save()
             
         } catch (error) {
             throw error
             
         }
-        
-
-
     }
-    async updateimagebyid(id:string, updatedto:UpdateDto):Promise<PostDocument>{
-        let user = await this.findone(id)
-        if(!user){
-            throw new NotFoundException (`post with ${id} does not exist`)
-        }
-        user.postImage = updatedto.postImage ?? user.postImage
-        return user.save()
-    }
+ 
 
     async deletePost(postid:string, userid:string){
         try {
@@ -92,11 +109,11 @@ export class PostsService{
 
        async addComment(userId: string, postId: string, comment: PostCommentDto) {
         try {
-          const foundPost = await this.postModel.findById(postId);
+          const foundPost = await this.postModel.find({id:postId});
           const newComment = await this.commentservice.postComment(userId, comment);
-          let updatedPost = await foundPost.updateOne({
-            $push: { comments: newComment.id },
-          });
+        //   let updatedPost = await foundPost.updateOne({
+        //     $push: { comments: newComment.id },
+        //   });
           return newComment;
         } catch (error) {
           throw error;
@@ -105,11 +122,11 @@ export class PostsService{
 
       async updateComment(userId: string, postId: string, comment: PostCommentDto) {
         try {
-          const foundPost = await this.postModel.findById(postId);
+          const foundPost = await this.postModel.find({id:postId});
           const newComment = await this.commentservice.postComment(userId, comment);
-          let updatedPost = await foundPost.updateOne({
-            $push: { comments: newComment.id },
-          });
+        //   let updatedPost = await foundPost.updateOne({
+        //     $push: { comments: newComment.id },
+        //   });
           return newComment;
         } catch (error) {
           throw error;
@@ -125,6 +142,58 @@ export class PostsService{
           return deletedComment;
         } catch (error) {
           throw error;
+        }
+      }
+
+      async makemoeydonations(dto:MoneydonationDto, postid:string, userid:string){
+        try {
+          const findpost= this.postModel.find({id:postid})
+          const makedonations= await this.money.donatebmoney(dto,userid)
+          return makedonations
+
+          
+        } catch (error) {
+          return error
+          
+        }
+  
+      }
+
+      async recieptforpayment(filestring:Express.Multer.File, userid:string, postid:string){
+        try {
+        const findpost=await this.postModel.findOneAndUpdate({_id:postid, author:userid})
+        const uploadreciept= await this.cloudiaryservice.uploadimage(filestring)
+        return uploadreciept
+          
+        } catch (error) {
+          return error
+          
+        }
+        
+      }
+
+      async blooddonatio(dto:BloodDonationDto, postid:string, userid:string){
+        try {
+          const findpost = this.postModel.find({id:postid})
+          const newdonation = await this.blood.donateblood(dto, userid)
+          return newdonation
+          
+        } catch (error) {
+          return error
+          
+        }
+      }
+
+      async reliefmatrialdonations(dto:ReliefMaterialDto, postid:string,userid:string){
+        try {
+          const findpost= this.postModel.find({id:postid})
+          const makedonation  = await this.reliefmaterial.makedonation(dto, userid)
+          return makedonation
+
+          
+        } catch (error) {
+          return error
+          
         }
       }
 

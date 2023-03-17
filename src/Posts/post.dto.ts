@@ -3,6 +3,11 @@ import { User } from "../user/user.schema"
 
 
 export class PostDto{
+
+    @IsString()
+    @IsNotEmpty()
+    header:string 
+
     @IsString()
     @IsNotEmpty()
     content:string 
@@ -17,6 +22,11 @@ export class PostDto{
 
 
 export class UpdateDto{
+
+    @IsString()
+    @IsOptional()
+    header:string 
+
     @IsString()
     @IsOptional()
     content:string 
