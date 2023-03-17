@@ -11,9 +11,9 @@ import { Roles } from "../user/roles.enum";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { PostCommentDto } from "../comment/comment.dto";
 import * as fs from 'fs';
-import { MoneydonationDto } from "../money/money.dto";
-import { BloodDonationDto } from "../blood/blood.dto";
-import { ReliefMaterialDto } from "../reliefmaterials/relief.dto";
+import { MoneydonationDto, paymentResponse } from "../money/money.dto";
+import { BloodDonationDto, bloodResponse } from "../blood/blood.dto";
+import { ReliefMaterialDto, ReliefResponse } from "../reliefmaterials/relief.dto";
 
 
 
@@ -164,11 +164,11 @@ export class PostsController{
     
     @Post("money/:postid")
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.DONATORS)
+    @Role(Roles.DONATORS, Roles.AGENCY)
     async moneydonation(@Request()req, @Res()res:Response, @Body()donations:MoneydonationDto, @Param("postid")postid:string){
         try {
-            const newcdonation = await this.postservice.makemoeydonations(req.user.id,postid, donations)
-            return res.status(200).json(newcdonation)
+            const newcdonation = await this.postservice.makemoeydonations(donations,req.user.id, postid)
+             return res.status(200).json(newcdonation)
             
         } catch (error) {
             throw error
@@ -190,12 +190,8 @@ export class PostsController{
       try {
         const fileBuffer = await fs.promises.readFile(file.path);
         const fileString = fileBuffer.toString();
-        const newimage = await this.postservice.recieptforpayment(
-          fileString,
-          req.user.id,
-          postid
-        );
-        res.status(200).json(newimage);
+        const newimage = await this.postservice.recieptforpayment(file,req.user.id,postid)
+        res.status(200).json({newimage,"info":"reciept for payment has been successfully uploaded, that you so much for the donations"});
       } catch (error) {
         return error;
       }
@@ -204,11 +200,11 @@ export class PostsController{
     
     @Post("blood/:postid")
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY,Roles.DONATORS)
+    @Role(Roles.DONATORS)
     async blooddonation(@Request()req, @Res()res:Response, @Body()blood:BloodDonationDto, @Param("postid")postid:string){
         try {
-            const newdonation = await this.postservice.blooddonatio(req.user.id,postid,blood)
-            return res.status(200).json(newdonation)
+            const newdonation = await this.postservice.blooddonatio(blood,req.user.id,postid)
+            return res.status(200).json({newdonation, "appreciation": bloodResponse})
             
         } catch (error) {
             throw error
@@ -220,11 +216,11 @@ export class PostsController{
     
     @Post("reliefmaterials/:postid")
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY,Roles.DONATORS)
+    @Role(Roles.DONATORS)
     async ReliefMateriaDonation(@Request()req, @Res()res:Response, @Body()relief:ReliefMaterialDto, @Param("postid")postid:string){
         try {
-            const newReliefDoations = await this.postservice.reliefmatrialdonations(req.user.id,postid,relief)
-            return res.status(200).json(newReliefDoations)
+            const newReliefDoations = await this.postservice.reliefmatrialdonations(relief, req.user.id, postid)
+            return res.status(200).json({newReliefDoations,"appreciation":ReliefResponse})
             
         } catch (error) {
             throw error

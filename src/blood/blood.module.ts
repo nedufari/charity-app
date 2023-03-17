@@ -5,7 +5,7 @@ import { BloodService } from "./blood.service";
 
 
 @Module({
-    imports:[MongooseModule.forFeature([{name:"Bloods", schema:BloodSchema}])],
+    imports:[MongooseModule.forFeature([{name:"Blood", schema:BloodSchema}])],
     providers:[BloodService],
     
     exports:[BloodService],

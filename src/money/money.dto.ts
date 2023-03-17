@@ -2,7 +2,7 @@ import { Date } from "mongoose"
 
 export class MoneydonationDto{ //update
     amount:string
-    currecy:string 
+    currency:string 
     reciept:string
     
 

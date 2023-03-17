@@ -23,7 +23,8 @@ export class PostsService{
     private cloudiaryservice:CloudinaryService,
     private money:MoneyService,
     private blood:BloodService,
-    private reliefmaterial:ReliefMaterialService
+    private reliefmaterial:ReliefMaterialService,
+    private userservice:UserService
     
     ){}
 
@@ -149,7 +150,18 @@ export class PostsService{
         try {
           const findpost= this.postModel.find({id:postid})
           const makedonations= await this.money.donatebmoney(dto,userid)
-          return makedonations
+          const agency = await this.userservice.finduserByid(userid)
+          const bank= agency.bankName
+          const account1 = agency.account1
+          const accountName = agency.accountName
+
+          return {
+            makedonations,
+            bank,
+            account1,
+            accountName
+          
+          }
 
           
         } catch (error) {
@@ -162,7 +174,7 @@ export class PostsService{
       async recieptforpayment(filestring:Express.Multer.File, userid:string, postid:string){
         try {
         const findpost=await this.postModel.findOneAndUpdate({_id:postid, author:userid})
-        const uploadreciept= await this.cloudiaryservice.uploadimage(filestring)
+        const uploadreciept= await this.money.uploadrecipt(filestring)
         return uploadreciept
           
         } catch (error) {

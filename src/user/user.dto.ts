@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from "class-validator"
+import { IsEmail, IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator"
 import { Posts } from "../Posts/post.schema"
 import { Roles } from "./roles.enum"
 
@@ -32,11 +32,13 @@ export class UpdateUserDto{
 
     @IsString()
     @IsOptional()
+    @MinLength(10)
+    @MaxLength(10)
     account1:string
 
     @IsString()
     @IsOptional()
-    account2:string
+    accountName:string
 
     @IsString()
     @IsOptional()
@@ -53,6 +55,10 @@ export class UpdateUserDto{
     @IsString()
     @IsOptional()
     imagepath:string
+
+    @IsString()
+    @IsOptional()
+    bankName:string
 
     @IsOptional()
     posts:Posts[]

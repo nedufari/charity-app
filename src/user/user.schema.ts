@@ -28,7 +28,7 @@ export class User {
     @Prop()
     phone:string
 
-    @Prop({ enum:Roles, default:Roles.AGENCY})
+    @Prop({ enum:Roles, default:Roles.DONATORS})
     role:Roles
     /////////////////////////////////////////////// agency info 
 
@@ -44,8 +44,11 @@ export class User {
     @Prop({length:10})
     account1:string
 
-    @Prop({length:10})
-    account2:string
+    @Prop()
+    accountName:string
+
+    @Prop()
+    bankName:string
 
     @Prop()
     imagePath :string

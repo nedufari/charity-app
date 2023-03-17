@@ -50,7 +50,7 @@ export class UserService{
         // const hahsedpassword = await  this.authservice.hashpassword(dto.password)
         let user = await this.finduserByid(id)
         user.account1=dto.account1 ?? user.account1
-        user.account2=dto.account2 ??user.account2
+        user.accountName=dto.accountName ??user.accountName
         user.address=dto.address ?? user.address
         user.agencyName=dto.agencyName ?? user.agencyName
         user.body=dto.body ?? user.body

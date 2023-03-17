@@ -6,7 +6,7 @@ import { Blood, BloodDocument } from "./blood.schema";
 
 @Injectable()
 export class BloodService {
-    constructor(@InjectModel("Bloods") private readonly bloodmodel:Model<BloodDocument>){}
+    constructor(@InjectModel("Blood") private readonly bloodmodel:Model<BloodDocument>){}
 
     async donateblood(blooddto:BloodDonationDto, userId:string){
         try {

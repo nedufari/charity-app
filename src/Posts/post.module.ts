@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { BloodSchema } from "../blood/blood.schema";
 import { BloodService } from "../blood/blood.service";
+import { CloudiaryModule } from "../cloudinary/cloudinary.module";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { CommentSchema } from "../comment/comment.schema";
 import { CommentService } from "../comment/comment.service";
@@ -22,8 +23,8 @@ import { PostsService } from "./posts.service";
         {name:"User", schema:UserSchema},
         {name:"Blood", schema:BloodSchema},
         {name:"Money", schema:MoneySchema},
-        {name:"ReliefMaterial", schema:ReliefMaterialSchema},
-        ])],
+        {name:"ReliefMaterial", schema:ReliefMaterialSchema}
+        ]), CloudiaryModule],
     controllers:[PostsController] ,
     providers:[PostsService,UserService, CommentService, CloudinaryService, BloodService, MoneyService, ReliefMaterialService]
 })
