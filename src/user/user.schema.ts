@@ -28,7 +28,7 @@ export class User {
     @Prop()
     phone:string
 
-    @Prop({ enum:Roles, default:Roles.DONATORS})
+    @Prop({ enum:Roles, default:Roles.ADMIN})
     role:Roles
     /////////////////////////////////////////////// agency info 
 

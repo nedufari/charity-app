@@ -27,7 +27,6 @@ export class UserController{
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.ADMIN)
-
     @Get('fullname')
     searchuser(@Query()query:ExpressQuery){
         return this.userservice.searchuser(query)
@@ -40,12 +39,14 @@ export class UserController{
         return this.userservice.searchuserbyemail(query)
     }
 
-    @UseGuards(JwtGuard,RoleGuard)
+    // @UseGuards(JwtGuard)
     @Role(Roles.ADMIN)
     @Get('all')
     findall(){
         return this.userservice.getalluser()
     }
+
+
 
 
   

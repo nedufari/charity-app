@@ -58,6 +58,34 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## API ENDPOINTS 
+```bash
+POST  api/auth/signup   #register a new user into the platform
+POST  api/auth/login    #login an already existing user and generate a token 
+POST  api/auth/verify-jwt #verify the jwt token 
+
+PATCH  api/user/:id       #for user update passing the id of the user as a parameter
+GET   /api/user/fullname/?keyword=&skip=2&page=1  # query the fullname from the user table authorized only by the admin
+GET   api/user/email/?keyword=&skip=2&page=1 #another query for the search functionality only authorised by the admin 
+GET   api/user/all #another privilage of the adin user to fetch all the users
+
+
+POST  api/posts/comment/:postid #make a comment on a post 
+PATCH  api/posts/comment/:postid  #edit a comment already made by you on a post
+DELETE  api/posts/delete/:commentid #delete a comment made alsready
+
+POST  api/posts/new   #xreate a new post
+GET   api/posts/header/?keyword=&skip=2&page=1  #search for a particular post by its header 
+PATCH  api/posts/:id #update a post 
+DELETE  api/posts/:postid #delete a post 
+PATCH   api/posts/upload/:postid #uploading images to 
+POST    api/posts/money/:postid  #making money donations 
+POST    api/posst/blood/:postid   #making blood donaions 
+POST    api/posts/reliefmaterials/:postid   #making donations for relief materials
+
+
+
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

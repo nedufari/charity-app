@@ -101,7 +101,7 @@ export class UserService{
     }
 
     async getalluser():Promise<UserDocument[]>{
-        return await this.usermodel.find().populate("post").exec()
+        return await this.usermodel.find().populate("posts").exec()
      }
 
    
