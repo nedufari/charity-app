@@ -11,6 +11,8 @@ import { ReliefMaterialModule } from './reliefmaterials/relief.module';
 import { MoneyModule } from './money/money.module';
 import {ConfigModule}  from  "@nestjs/config"
 import { CloudiaryModule } from './cloudinary/cloudinary.module';
+import { AppController } from './app.controller';
+
 
 
 
@@ -18,6 +20,7 @@ import { CloudiaryModule } from './cloudinary/cloudinary.module';
   imports: [CloudiaryModule,PostsModule, UserModule,AuthModule,CommentModule,BloodModule,ReliefMaterialModule,MoneyModule,ConfigModule.forRoot({isGlobal:true}),
     // MongooseModule.forRoot("mongodb://localhost:27017/olisa")
   MongooseModule.forRoot("mongodb://mongo:BPyjxQFIwylyURAYC0sR@containers-us-west-43.railway.app:6531")],
+  controllers: [AppController],
   
 })
 export class AppModule {}
