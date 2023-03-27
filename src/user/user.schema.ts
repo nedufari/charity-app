@@ -54,6 +54,8 @@ export class User {
     imagePath :string
 
     // relationships with various tables 
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Posts'})
+    posts:Posts[]
    
 
 }

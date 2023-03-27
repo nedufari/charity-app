@@ -24,21 +24,21 @@ export class Posts{
     @Prop()
     postImage:string
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:User.name})
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'User', required:true})
     author:any 
 
    
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:Comment.name})
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Comment'})
     comments:any[]
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:Blood.name})
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Blood'})
     bloodDonations:any[]
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:Money.name})
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Money'})
     MoneyDonations:any[]
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:ReliefMAterial.name})
+    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'ReliefMAterial'})
     ReliefMaterials:any[]
 
         
