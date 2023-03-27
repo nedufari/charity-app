@@ -32,6 +32,7 @@ export class PostsController{
     async addComment(@Request()req, @Res()res:Response, @Body()comment:PostCommentDto, @Param("postid")postid:string){
         try {
             const newcomment = await this.postservice.addComment(req.user.id,postid, comment)
+            res.header('Access-Control-Allow-Origin', '*');
             return res.status(200).json(newcomment)
             
         } catch (error) {
@@ -47,6 +48,7 @@ export class PostsController{
     async updateComment(@Request()req, @Res()res:Response, @Body()comment:PostCommentDto, @Param("postid")postid:string){
         try {
             const newcomment = await this.postservice.updateComment(req.user.id,postid, comment)
+            res.header('Access-Control-Allow-Origin', '*');
             return res.status(200).json(newcomment)
             
         } catch (error) {
@@ -68,6 +70,7 @@ export class PostsController{
             commentId,
             req.user.id,
           );
+          res.header('Access-Control-Allow-Origin', '*');
           res.status(204).json(deletedComment);
         } catch (error) {
           res.status(500).json({ message: error.message });
@@ -82,6 +85,7 @@ export class PostsController{
     async createPost(@Body() post: PostDto, @Res() res:Response, @Request()req){
         try {
             const newpost = await this.postservice.createPost(req.user.id,post )
+            res.header('Access-Control-Allow-Origin', '*');
             res.status(201).json(newpost)
         }catch(error){
             res.status(500).json({message:error.message})
@@ -93,7 +97,8 @@ export class PostsController{
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.AGENCY)
     @Get('header')
-    async finfAll(@Query()query:ExpressQuery):Promise<PostDocument[]>{
+    async finfAll(@Query()query:ExpressQuery,@Res()res:Response):Promise<PostDocument[]>{
+      res.header('Access-Control-Allow-Origin', '*');
         return await this.postservice.findall(query)
     }
 
@@ -101,7 +106,8 @@ export class PostsController{
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.AGENCY)
     @Get(':id')
-    async finone(@Param("id")id:string):Promise<PostDocument>{
+    async finone(@Param("id")id:string, @Res()res:Response):Promise<PostDocument>{
+        res.header('Access-Control-Allow-Origin', '*');
         return await this.postservice.findone(id)
     }
 
@@ -112,6 +118,7 @@ export class PostsController{
     async updatePost(@Body() post: PostDto, @Res() res:Response, @Request()req, @Param("postid")postid:string){
         try {
             const newpost = await this.postservice.updatePost(postid,post,req.user.id )
+            res.header('Access-Control-Allow-Origin', '*');
             res.status(201).json(newpost)
         }catch(error){
             res.status(500).json({message:error.message})
@@ -127,6 +134,7 @@ export class PostsController{
         @Res() res: Response,@Request() req,@Param('postId') postId: string,) {
         try {
           const newPost = await this.postservice.deletePost(postId, req.user.id);
+          res.header('Access-Control-Allow-Origin', '*');
           res.status(200).json(newPost);
         } catch (error) {
           res.status(500).json({ message: error.message });
@@ -154,6 +162,7 @@ export class PostsController{
           req.user.id,
           postid
         );
+        res.header('Access-Control-Allow-Origin', '*');
         res.status(200).json(newimage);
       } catch (error) {
         return error;
@@ -168,6 +177,7 @@ export class PostsController{
     async moneydonation(@Request()req, @Res()res:Response, @Body()donations:MoneydonationDto, @Param("postid")postid:string){
         try {
             const newcdonation = await this.postservice.makemoeydonations(donations,req.user.id, postid)
+            res.header('Access-Control-Allow-Origin', '*');
              return res.status(200).json(newcdonation)
             
         } catch (error) {
@@ -191,6 +201,7 @@ export class PostsController{
         const fileBuffer = await fs.promises.readFile(file.path);
         const fileString = fileBuffer.toString();
         const newimage = await this.postservice.recieptforpayment(file,req.user.id,postid)
+        res.header('Access-Control-Allow-Origin', '*');
         res.status(200).json({newimage,"info":"reciept for payment has been successfully uploaded, that you so much for the donations"});
       } catch (error) {
         return error;
@@ -204,6 +215,7 @@ export class PostsController{
     async blooddonation(@Request()req, @Res()res:Response, @Body()blood:BloodDonationDto, @Param("postid")postid:string){
         try {
             const newdonation = await this.postservice.blooddonatio(blood,req.user.id,postid)
+            res.header('Access-Control-Allow-Origin', '*');
             return res.status(200).json({newdonation, "appreciation": bloodResponse})
             
         } catch (error) {
@@ -220,6 +232,7 @@ export class PostsController{
     async ReliefMateriaDonation(@Request()req, @Res()res:Response, @Body()relief:ReliefMaterialDto, @Param("postid")postid:string){
         try {
             const newReliefDoations = await this.postservice.reliefmatrialdonations(relief, req.user.id, postid)
+            res.header('Access-Control-Allow-Origin', '*');
             return res.status(200).json({newReliefDoations,"appreciation":ReliefResponse})
             
         } catch (error) {
