@@ -79,9 +79,10 @@ GET   api/posts/header/?keyword=&skip=2&page=1  #search for a particular post by
 PATCH  api/posts/:id #update a post 
 DELETE  api/posts/:postid #delete a post 
 PATCH   api/posts/upload/:postid #uploading images to 
-POST    api/posts/money/:postid  #making money donations 
-POST    api/posst/blood/:postid   #making blood donaions 
-POST    api/posts/reliefmaterials/:postid   #making donations for relief materials
+POST    api/money/donate/money/:postid  #making money donations 
+PATCH   api/money/upload/reciept/:postid # uploading proof of payment
+POST    api/blood/donate/:postid   #making blood donaions 
+POST    api/relief/dinate/relief/:postid   #making donations for relief materials
 
 
 

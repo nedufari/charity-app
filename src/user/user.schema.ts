@@ -1,16 +1,19 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 import { Blood } from "../blood/blood.schema";
 import { Comment } from "../comment/comment.schema";
 import { Money } from "../money/money.schema";
-import { Posts } from "../Posts/post.schema";
+import { PostDocument, PostSchema, Posts } from "../Posts/post.schema";
 import { ReliefMAterial } from "../reliefmaterials/relief.schema";
 
 import { Roles } from "./roles.enum";
+import { Transform, Type } from "class-transformer";
 
 export type UserDocument = User & Document
 @Schema({timestamps:true})
 export class User {
+    @Transform(({ value }) => value.toString())
+    _id: ObjectId;
 
     /////////////////////////////////////////// shared schema for all forms of user 
     @Prop({required:true})
@@ -28,7 +31,7 @@ export class User {
     @Prop()
     phone:string
 
-    @Prop({ enum:Roles, default:Roles.ADMIN})
+    @Prop({ enum:Roles, default:Roles.DONATORS})
     role:Roles
     /////////////////////////////////////////////// agency info 
 
@@ -54,7 +57,8 @@ export class User {
     imagePath :string
 
     // relationships with various tables 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Posts'})
+    @Prop({type: PostSchema})
+    @Type(()=>Posts)
     posts:Posts[]
    
 

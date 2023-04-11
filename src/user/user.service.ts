@@ -58,6 +58,7 @@ export class UserService{
         user.fullname=dto.fullname ?? user.fullname
         user.header=dto.header ?? user.header
         user.phone=dto.phone ?? user.phone
+        user.imagePath=dto.imagepath ?? user.imagePath,
         user.role = dto.role ?? user.role
 
         return user.save()

@@ -23,7 +23,7 @@ export class AuthService{
         return await bcrypt.compare(password,hashpassword)
     }
 
-    async Register(user:Readonly<SignupDto>):Promise<UserDocument>{
+    async Register(user:SignupDto):Promise<UserDocument>{
         const { fullname, email, password}=user
 
         const existingUser= await this.userservice.finduserByemail(email)
@@ -36,6 +36,7 @@ export class AuthService{
         // return this.userservice._getUser(newUser) 
         return newUser.save()
 
+        
     }
 
     async doesPasswordMatch (password:string, hahsedpassword:string):Promise<boolean>{

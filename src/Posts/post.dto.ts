@@ -12,12 +12,10 @@ export class PostDto{
     @IsNotEmpty()
     content:string 
 
-
     @IsString()
     @IsOptional()
     postImage:string
-
-    
+ 
 }
 
 

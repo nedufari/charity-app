@@ -22,7 +22,7 @@ export class UserController{
     @Role(Roles.AGENCY, Roles.DONATORS)
     @Patch(':id')
     updateUser(@Param("id")id:string, @Body()dto:UpdateUserDto,@Res()res){
-        res.header('Access-Control-Allow-Origin', '*');
+       
         return this.userservice.updateuser(id,dto)
     }
 
@@ -30,7 +30,7 @@ export class UserController{
     @Role(Roles.ADMIN)
     @Get('fullname')
     searchuser(@Query()query:ExpressQuery,@Res()res){
-        res.header('Access-Control-Allow-Origin', '*');
+        
         return this.userservice.searchuser(query)
     }
 
@@ -38,16 +38,17 @@ export class UserController{
     @Role(Roles.ADMIN)
     @Get('email')
     findalluser(@Query()query:ExpressQuery,@Res()res){
-        res.header('Access-Control-Allow-Origin', '*');
+        
         return this.userservice.searchuserbyemail(query)
     }
 
     // @UseGuards(JwtGuard)
-    @Role(Roles.ADMIN)
+    //@Role(Roles.ADMIN)
     @Get('all')
-    findall(@Res()res){
-        res.header('Access-Control-Allow-Origin', '*');
-        return this.userservice.getalluser()
+    async findall(@Res()res){
+        console.log(this.userservice.getalluser())
+        
+        return await this.userservice.getalluser()
     }
 
 

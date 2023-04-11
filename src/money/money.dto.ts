@@ -1,8 +1,15 @@
+import { IsString } from "class-validator"
 import { Date } from "mongoose"
 
-export class MoneydonationDto{ //update
+export class MoneydonationDto{ 
+    //update
+    @IsString()
     amount:string
+
+    @IsString()
     currency:string 
+
+    @IsString()
     reciept:string
     
 

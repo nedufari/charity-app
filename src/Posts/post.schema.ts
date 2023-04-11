@@ -1,18 +1,21 @@
 
 import { Prop, Schema, SchemaFactory,  } from "@nestjs/mongoose";
-import { Type } from "class-transformer";
-import mongoose, { Document } from "mongoose";
+import { Transform, Type } from "class-transformer";
+import mongoose, { Document, ObjectId } from "mongoose";
 import { Blood } from "../blood/blood.schema";
 import { Comment } from "../comment/comment.schema";
 import { Money } from "../money/money.schema";
 import { ReliefMAterial } from "../reliefmaterials/relief.schema";
-import { User, UserSchema } from "../user/user.schema";
+import { User, UserDocument, UserSchema } from "../user/user.schema";
 
 
 export type PostDocument = Posts & Document
 
 @Schema({timestamps:true})
 export class Posts{
+
+    @Transform(({ value }) => value.toString())
+    _id: ObjectId;
 
     @Prop({reuired:true})
     header:string
@@ -24,22 +27,30 @@ export class Posts{
     @Prop()
     postImage:string
 
+
+
     @Prop({type:mongoose.Schema.Types.ObjectId, ref:'User', required:true})
-    author:any 
+    @Type(()=>User)
+    author:User
 
    
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Comment'})
-    comments:any[]
+    @Prop({type:Comment})
+    @Type(()=>Comment)
+    comments:Comment[]
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Blood'})
-    bloodDonations:any[]
+    @Prop({type:Blood})
+    @Type(()=>Blood)
+    bloodDonations:Blood[]
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'Money'})
-    MoneyDonations:any[]
+    @Prop({type:Money})
+    @Type(()=>Money)
+    MoneyDonations:Money[]
 
-    @Prop({type:mongoose.Schema.Types.ObjectId, ref:'ReliefMAterial'})
-    ReliefMaterials:any[]
+    @Prop({type:ReliefMAterial})
+    @Type(()=>ReliefMAterial)
+    ReliefMaterials:ReliefMAterial[]
+
 
         
 

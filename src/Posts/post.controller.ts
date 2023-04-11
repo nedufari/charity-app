@@ -11,10 +11,6 @@ import { Roles } from "../user/roles.enum";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { PostCommentDto } from "../comment/comment.dto";
 import * as fs from 'fs';
-import { MoneydonationDto, paymentResponse } from "../money/money.dto";
-import { BloodDonationDto, bloodResponse } from "../blood/blood.dto";
-import { ReliefMaterialDto, ReliefResponse } from "../reliefmaterials/relief.dto";
-
 
 
 @Controller('posts')
@@ -31,8 +27,8 @@ export class PostsController{
     @Role(Roles.AGENCY,Roles.DONATORS)
     async addComment(@Request()req, @Res()res:Response, @Body()comment:PostCommentDto, @Param("postid")postid:string){
         try {
-            const newcomment = await this.postservice.addComment(req.user.id,postid, comment)
-            res.header('Access-Control-Allow-Origin', '*');
+            const newcomment = await this.postservice.addComment(req.user._id,postid, comment)
+            
             return res.status(200).json(newcomment)
             
         } catch (error) {
@@ -41,21 +37,26 @@ export class PostsController{
         }
     }
 
-
-    @Patch("comment/:postid")
-    @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY,Roles.DONATORS)
-    async updateComment(@Request()req, @Res()res:Response, @Body()comment:PostCommentDto, @Param("postid")postid:string){
-        try {
-            const newcomment = await this.postservice.updateComment(req.user.id,postid, comment)
-            res.header('Access-Control-Allow-Origin', '*');
-            return res.status(200).json(newcomment)
-            
-        } catch (error) {
-            throw error
-            
-        }
+    @Get("comment/all")
+    async finadallcomment(){
+      return await this.postservice.findallcomment()
     }
+
+
+    // @Patch("comment/:postid")
+    // @UseGuards(JwtGuard,RoleGuard)
+    // @Role(Roles.AGENCY,Roles.DONATORS)
+    // async updateComment(@Request()req, @Res()res:Response, @Body()comment:PostCommentDto, @Param("postid")postid:string){
+    //     try {
+    //         const newcomment = await this.postservice.updateComment(req.user.id,postid, comment)
+            
+    //         return res.status(200).json(newcomment)
+            
+    //     } catch (error) {
+    //         throw error
+            
+    //     }
+    // }
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.ADMIN,Roles.AGENCY,Roles.DONATORS)
@@ -64,13 +65,16 @@ export class PostsController{
         @Res() res: Response,
         @Request() req,
         @Param('commentId') commentId: string,
+        @Param('postId') postId: string,
+
       ) {
         try {
           const deletedComment = await this.postservice.deleteComment(
             commentId,
             req.user.id,
+            postId
           );
-          res.header('Access-Control-Allow-Origin', '*');
+          
           res.status(204).json(deletedComment);
         } catch (error) {
           res.status(500).json({ message: error.message });
@@ -80,12 +84,13 @@ export class PostsController{
 
 
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY, Roles.ADMIN)
+    @Role(Roles.AGENCY, Roles.ADMIN, Roles.DONATORS)
     @Post('new')
-    async createPost(@Body() post: PostDto, @Res() res:Response, @Request()req){
+    async createPost(@Body() post: PostDto, @Res() res:Response, @Request()req:any){
         try {
-            const newpost = await this.postservice.createPost(req.user.id,post )
-            res.header('Access-Control-Allow-Origin', '*');
+            const user = req.user; 
+            const newpost = await this.postservice.createPost(post,user._id )
+            
             res.status(201).json(newpost)
         }catch(error){
             res.status(500).json({message:error.message})
@@ -98,28 +103,30 @@ export class PostsController{
     @Role(Roles.AGENCY)
     @Get('header')
     async finfAll(@Query()query:ExpressQuery,@Res()res:Response):Promise<PostDocument[]>{
-      res.header('Access-Control-Allow-Origin', '*');
+      
         return await this.postservice.findall(query)
     }
 
 
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY)
+    @Role(Roles.AGENCY,Roles.DONATORS)
     @Get(':id')
     async finone(@Param("id")id:string, @Res()res:Response):Promise<PostDocument>{
-        res.header('Access-Control-Allow-Origin', '*');
+      console.log(this.postservice.findone(id))
+       
         return await this.postservice.findone(id)
     }
 
 
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY)
+    @Role(Roles.AGENCY,Roles.DONATORS)
     @Patch(':id')
-    async updatePost(@Body() post: PostDto, @Res() res:Response, @Request()req, @Param("postid")postid:string){
+    updatePost(@Body() post: PostDto, @Res() res:Response, @Request()req, @Param("postid")postid:string){
         try {
-            const newpost = await this.postservice.updatePost(postid,post,req.user.id )
-            res.header('Access-Control-Allow-Origin', '*');
-            res.status(201).json(newpost)
+            const newpost =  this.postservice.updatePost(postid,post,req.user.id )
+            return newpost
+            
+            
         }catch(error){
             res.status(500).json({message:error.message})
         }
@@ -134,7 +141,7 @@ export class PostsController{
         @Res() res: Response,@Request() req,@Param('postId') postId: string,) {
         try {
           const newPost = await this.postservice.deletePost(postId, req.user.id);
-          res.header('Access-Control-Allow-Origin', '*');
+          
           res.status(200).json(newPost);
         } catch (error) {
           res.status(500).json({ message: error.message });
@@ -162,7 +169,7 @@ export class PostsController{
           req.user.id,
           postid
         );
-        res.header('Access-Control-Allow-Origin', '*');
+       
         res.status(200).json(newimage);
       } catch (error) {
         return error;
@@ -171,75 +178,17 @@ export class PostsController{
 
 
     
-    @Post("money/:postid")
-    @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.DONATORS, Roles.AGENCY)
-    async moneydonation(@Request()req, @Res()res:Response, @Body()donations:MoneydonationDto, @Param("postid")postid:string){
-        try {
-            const newcdonation = await this.postservice.makemoeydonations(donations,req.user.id, postid)
-            res.header('Access-Control-Allow-Origin', '*');
-             return res.status(200).json(newcdonation)
-            
-        } catch (error) {
-            throw error
-            
-        }
-    }
+  
 
 
-    @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.DONATORS)
-    @Patch("/upload/reciept/:postid")
-    @UseInterceptors(FileInterceptor('file'))
-    async uploadpaymentrecieptbypostid(
-      @Req() req,
-      @Param("postid") postid: string,
-      @UploadedFile() file: Express.Multer.File,
-      @Res() res
-    ) {
-      try {
-        const fileBuffer = await fs.promises.readFile(file.path);
-        const fileString = fileBuffer.toString();
-        const newimage = await this.postservice.recieptforpayment(file,req.user.id,postid)
-        res.header('Access-Control-Allow-Origin', '*');
-        res.status(200).json({newimage,"info":"reciept for payment has been successfully uploaded, that you so much for the donations"});
-      } catch (error) {
-        return error;
-      }
-    }
-
-    
-    @Post("blood/:postid")
-    @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.DONATORS)
-    async blooddonation(@Request()req, @Res()res:Response, @Body()blood:BloodDonationDto, @Param("postid")postid:string){
-        try {
-            const newdonation = await this.postservice.blooddonatio(blood,req.user.id,postid)
-            res.header('Access-Control-Allow-Origin', '*');
-            return res.status(200).json({newdonation, "appreciation": bloodResponse})
-            
-        } catch (error) {
-            throw error
-            
-        }
-    }
 
 
     
-    @Post("reliefmaterials/:postid")
-    @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.DONATORS)
-    async ReliefMateriaDonation(@Request()req, @Res()res:Response, @Body()relief:ReliefMaterialDto, @Param("postid")postid:string){
-        try {
-            const newReliefDoations = await this.postservice.reliefmatrialdonations(relief, req.user.id, postid)
-            res.header('Access-Control-Allow-Origin', '*');
-            return res.status(200).json({newReliefDoations,"appreciation":ReliefResponse})
-            
-        } catch (error) {
-            throw error
-            
-        }
-    }
+   
+
+
+    
+  
 
    
         
