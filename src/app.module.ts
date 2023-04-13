@@ -24,7 +24,7 @@ import { AppController } from './app.controller';
     ReliefMaterialModule,
     MoneyModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    // MongooseModule.forRoot('mongodb://localhost:27017/olisa'),
+    // MongooseModule.forRoot('mongodb://localhost:27017/olisa'),],
   
    MongooseModule.forRoot("mongodb://mongo:BPyjxQFIwylyURAYC0sR@containers-us-west-43.railway.app:6531")],
   controllers: [AppController],

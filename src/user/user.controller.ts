@@ -10,6 +10,7 @@ import { JwtGuard } from "../auth/guard/authguard";
 import { Role } from "../auth/guard/role.decorator";
 import { RoleGuard } from "../auth/guard/roleguards";
 import { Roles } from "./roles.enum";
+import { User, UserDocument } from "./user.schema";
 
 @Controller("user")
 
@@ -18,12 +19,12 @@ export class UserController{
 
     }
 
-    @UseGuards(JwtGuard,RoleGuard)
+    @UseGuards(JwtGuard)
     @Role(Roles.AGENCY, Roles.DONATORS)
     @Patch(':id')
-    updateUser(@Param("id")id:string, @Body()dto:UpdateUserDto,@Res()res){
+    async updateUser(@Param("id")id:string, @Body()dto:UpdateUserDto):Promise<UserDocument>{
        
-        return this.userservice.updateuser(id,dto)
+        return await this.userservice.updateuser(id,dto)
     }
 
     @UseGuards(JwtGuard,RoleGuard)

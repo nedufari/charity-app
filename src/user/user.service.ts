@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { User, UserDocument } from "./user.schema";
 import * as bcrypt from "bcrypt"
 import { UserDetails } from "./user.interface";
@@ -19,22 +19,6 @@ export class UserService{
         return newUser.save()
     }
 
-// _getUser(user:UserDocument):UserDetails{ //private healper function 
-//         return {
-//             id: user._id,
-//             fullname:user.fullname,
-//             phone:user.phone,
-//             address:user.address,    
-//             email:user.email,
-//             agencyname:user.agencyName,
-//             account1:user.account1,
-//             account2:user.account2,
-//             header:user.header,
-//             body:user.body,
-//             role:user.role
-            
-//         }
-//    }
 
    async finduserByemail(email:string):Promise<UserDocument|null>{
         return await this.usermodel.findOne({email}).exec()
@@ -46,23 +30,13 @@ export class UserService{
     return (user)
 }
 
-    async updateuser(id:string, dto:UpdateUserDto):Promise<UserDocument>{
-        // const hahsedpassword = await  this.authservice.hashpassword(dto.password)
-        let user = await this.finduserByid(id)
-        user.account1=dto.account1 ?? user.account1
-        user.accountName=dto.accountName ??user.accountName
-        user.address=dto.address ?? user.address
-        user.agencyName=dto.agencyName ?? user.agencyName
-        user.body=dto.body ?? user.body
-        user.email=dto.email ?? user.email
-        user.fullname=dto.fullname ?? user.fullname
-        user.header=dto.header ?? user.header
-        user.phone=dto.phone ?? user.phone
-        user.imagePath=dto.imagepath ?? user.imagePath,
-        user.role = dto.role ?? user.role
-
-        return user.save()
-    }
+async updateuser(id: string, dto: UpdateUserDto): Promise<UserDocument> {
+   
+    let user = await this.usermodel.findByIdAndUpdate(id, dto, { new: true });
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return user.save();
+  }
+  
 
    async searchuser(query:Query):Promise<UserDocument[]>{
 
