@@ -46,6 +46,10 @@ export class PostsService {
     }
   }
 
+  async fetchallpost():Promise<PostDocument[]>{
+    return await this.postModel.find({})
+  }
+
   async findall(query: Query): Promise<PostDocument[]> {
     //pagiation
     const respage = 2;

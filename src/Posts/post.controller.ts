@@ -98,6 +98,11 @@ export class PostsController{
         
       }
 
+      @Get('/allpost')
+      async fetallpost():Promise<PostDocument[]>{
+        return await this.postservice.fetchallpost()
+      }
+
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.AGENCY)

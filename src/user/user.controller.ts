@@ -46,7 +46,7 @@ export class UserController{
     // @UseGuards(JwtGuard)
     //@Role(Roles.ADMIN)
     @Get('all')
-    async findall(@Res()res){
+    async findall():Promise<UserDocument[]>{
         console.log(this.userservice.getalluser())
         
         return await this.userservice.getalluser()

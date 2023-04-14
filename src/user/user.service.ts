@@ -76,7 +76,7 @@ async updateuser(id: string, dto: UpdateUserDto): Promise<UserDocument> {
     }
 
     async getalluser():Promise<UserDocument[]>{
-        return await this.usermodel.find().populate("posts").exec()
+        return await this.usermodel.find({}).populate("posts").exec()
      }
 
    
