@@ -55,7 +55,7 @@ export class CommentService{
         }
       }
 
-      async findallcommet(){
-        return await this.commentmodel.find().exec()
+      async findallcommet():Promise<CommentDcument[]>{
+        return await this.commentmodel.find({})
       }
     }
