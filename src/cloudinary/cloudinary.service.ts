@@ -10,7 +10,9 @@ export class CloudinaryService{
                 if (error) return reject(error)
                 resolve(result)
             }) 
-            toStream(image.buffer, { highWaterMark: 1024 * 1024 }).pipe(upload)
+            toStream(image.buffer).pipe(upload)
+
+            //, { highWaterMark: 1024 * 1024 }
 
         })
         
