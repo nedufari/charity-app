@@ -7,6 +7,7 @@ import { UserDetails } from "./user.interface";
 import { UpdateUserDto } from "./user.dto";
 import {Query} from "express-serve-static-core"
 import { of } from "rxjs";
+import { Roles } from "./roles.enum";
 
 @Injectable()
 export class UserService{
@@ -14,8 +15,8 @@ export class UserService{
 
    
 
-    async create(fullname:string, email:string, password:string):Promise<UserDocument>{
-        const newUser = new this.usermodel({fullname, email, password})
+    async create(fullname:string, email:string, password:string, role:string):Promise<UserDocument>{
+        const newUser = new this.usermodel({fullname, email, password,role})
         return newUser.save()
     }
 

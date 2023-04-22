@@ -26,7 +26,7 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({ isGlobal: true }),
     // MongooseModule.forRoot('mongodb://localhost:27017/olisa'),],
   
-   MongooseModule.forRoot("mongodb://mongo:BPyjxQFIwylyURAYC0sR@containers-us-west-43.railway.app:6531")],
+    MongooseModule.forRoot( "mongodb://mongo:Yjj3YUI6HUyFMwaLRWCy@containers-us-west-157.railway.app:6419")],
   controllers: [AppController],
 })
 export class AppModule {}

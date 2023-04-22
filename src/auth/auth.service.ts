@@ -24,7 +24,7 @@ export class AuthService{
     }
 
     async Register(user:SignupDto):Promise<UserDocument>{
-        const { fullname, email, password}=user
+        const {email,role,password,fullname}=user
 
         const existingUser= await this.userservice.finduserByemail(email)
         if (existingUser) throw new HttpException(`email: ${email} is already taken by aother user`,HttpStatus.CONFLICT
@@ -32,7 +32,7 @@ export class AuthService{
 
         const hahsedpassword = await  this.hashpassword(password)
 
-        const newUser  = await this.userservice.create(fullname,email,hahsedpassword)
+        const newUser  = await this.userservice.create(fullname,email,hahsedpassword,role)
         // return this.userservice._getUser(newUser) 
         return newUser.save()
 

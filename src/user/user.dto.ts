@@ -48,9 +48,6 @@ export class UpdateUserDto{
     @IsOptional()
     phone:string
 
-    @IsEnum({Roles})
-    @IsOptional()
-    role:Roles
 
     @IsString()
     @IsOptional()
