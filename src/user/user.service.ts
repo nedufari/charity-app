@@ -38,6 +38,11 @@ async updateuser(id: string, dto: UpdateUserDto): Promise<UserDocument> {
     return user.save();
   }
   
+async deleteuser(id:string){
+    let user = await this.usermodel.findOneAndDelete({_id:id})
+    if (!user) throw new HttpException(`user with id ${id} is not found `, HttpStatus.NOT_FOUND)
+    return HttpStatus.NO_CONTENT
+}
 
    async searchuser(query:Query):Promise<UserDocument[]>{
 

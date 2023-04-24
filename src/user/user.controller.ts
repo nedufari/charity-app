@@ -1,4 +1,4 @@
-import { Get, Res } from "@nestjs/common";
+import { Delete, Get, Res } from "@nestjs/common";
 import { Patch } from "@nestjs/common";
 import { Controller,Query } from "@nestjs/common";
 import { Body, Param } from "@nestjs/common";
@@ -52,6 +52,12 @@ export class UserController{
         return await this.userservice.getalluser()
     }
 
+    @UseGuards(JwtGuard,RoleGuard)
+    @Role(Roles.ADMIN)
+    @Delete("deleteuser")
+    async deleteuser(@Param('id')id:string){
+        return await this.userservice.deleteuser(id)
+    }
 
 
 

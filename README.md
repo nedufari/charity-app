@@ -85,6 +85,7 @@ POST    api/blood/donate/:postid   #making blood donaions
 POST    api/relief/dinate/relief/:postid   #making donations for relief materials
 GET     api/posts/allpost #get all posts 
 GET     api/user/all #get all users 
+DELETE api/user/deleteuser #admin privilage
 
 
 
