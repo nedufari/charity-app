@@ -1,4 +1,4 @@
-import { Delete, Get, Res } from "@nestjs/common";
+import { Delete, Get, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { Patch } from "@nestjs/common";
 import { Controller,Query } from "@nestjs/common";
 import { Body, Param } from "@nestjs/common";
@@ -11,6 +11,7 @@ import { Role } from "../auth/guard/role.decorator";
 import { RoleGuard } from "../auth/guard/roleguards";
 import { Roles } from "./roles.enum";
 import { User, UserDocument } from "./user.schema";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("user")
 
@@ -54,9 +55,21 @@ export class UserController{
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.ADMIN)
-    @Delete("deleteuser")
+    @Delete("deleteuser/:id")
     async deleteuser(@Param('id')id:string){
-        return await this.userservice.deleteuser(id)
+        return await this.userservice.deleteuser(id) 
+    }
+
+    @UseGuards(JwtGuard,RoleGuard)
+    @Role(Roles.DONATORS,Roles.AGENCY,Roles.ADMIN)
+    @Patch("/upload/:id")
+    @UseInterceptors(FileInterceptor('file'))
+    async updatePostPhoto(
+      @Param('id') id: string,
+      @UploadedFile() file: Express.Multer.File,
+    ): Promise<void> {
+      const filename = await this.userservice.uploadFile(file);
+      await this.userservice.updatePhoto(id, filename);
     }
 
 

@@ -9,13 +9,11 @@ import { BloodModule } from './blood/blood.module';
 import { ReliefMaterialModule } from './reliefmaterials/relief.module';
 import { MoneyModule } from './money/money.module';
 import { ConfigModule } from '@nestjs/config';
-import { CloudiaryModule } from './cloudinary/cloudinary.module';
 import { AppController } from './app.controller';
 //import { databaseProvider } from './database.provider';
 
 @Module({
   imports: [
-    CloudiaryModule,
     PostsModule,
     UserModule,
     AuthModule,

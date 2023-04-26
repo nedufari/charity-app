@@ -80,12 +80,13 @@ PATCH  api/posts/:id #update a post
 DELETE  api/posts/:postid #delete a post 
 PATCH   api/posts/upload/:postid #uploading images to 
 POST    api/money/donate/money/:postid  #making money donations 
-PATCH   api/money/upload/reciept/:postid # uploading proof of payment
+PATCH   api/money/upload/:donationid # uploading proof of payment
 POST    api/blood/donate/:postid   #making blood donaions 
-POST    api/relief/dinate/relief/:postid   #making donations for relief materials
+POST    api/relief/donate/:postid   #making donations for relief materials
+PATCH   api/money/upload/:reliefid # pictures of relief materials
 GET     api/posts/allpost #get all posts 
 GET     api/user/all #get all users 
-DELETE api/user/deleteuser #admin privilage
+DELETE api/user/deleteuser/:id #admin privilage
 
 
 

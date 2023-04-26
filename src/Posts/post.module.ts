@@ -2,8 +2,6 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { BloodSchema } from "../blood/blood.schema";
 import { BloodService } from "../blood/blood.service";
-import { CloudiaryModule } from "../cloudinary/cloudinary.module";
-import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { CommentSchema } from "../comment/comment.schema";
 import { CommentService } from "../comment/comment.service";
 import { MoneySchema } from "../money/money.schema";
@@ -15,6 +13,7 @@ import { UserService } from "../user/user.service";
 import { PostsController } from "./post.controller";
 import { PostSchema } from "./post.schema";
 import { PostsService } from "./posts.service";
+import { ParseObjectIdPipe } from "./object.service";
 
 @Module({
     imports:[MongooseModule.forFeature([
@@ -24,9 +23,10 @@ import { PostsService } from "./posts.service";
         {name:"Blood", schema:BloodSchema},
         {name:"Money", schema:MoneySchema},
         {name:"ReliefMaterial", schema:ReliefMaterialSchema}
-        ]), CloudiaryModule],
+        ])],
     controllers:[PostsController] ,
-    providers:[PostsService,UserService, CommentService, CloudinaryService, BloodService, MoneyService, ReliefMaterialService]
+    providers:[PostsService,UserService, CommentService, BloodService, MoneyService, ReliefMaterialService,ParseObjectIdPipe],
+    exports:[PostsService,ParseObjectIdPipe]
 })
 
 export class PostsModule{}

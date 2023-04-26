@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Request, Res, UploadedFile, UseGuards, UseInterceptors} from "@nestjs/common";
 import { query, response, Response } from "express";
 import { JwtGuard } from "../auth/guard/authguard";
 import { PostDto,  UpdateDto } from "./post.dto";
@@ -11,6 +11,7 @@ import { Roles } from "../user/roles.enum";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { PostCommentDto } from "../comment/comment.dto";
 import * as fs from 'fs';
+import { ParseObjectIdPipe } from "./object.service";
 
 
 @Controller('posts')
@@ -160,26 +161,14 @@ export class PostsController{
     @Role(Roles.AGENCY, Roles.ADMIN)
     @Patch("/upload/:postid")
     @UseInterceptors(FileInterceptor('file'))
-    async uploadimagebypostid(
-      @Req() req,
-      @Param("postid") postid: string,
+    async updatePostPhoto(
+      @Param('postid') postid: string,
       @UploadedFile() file: Express.Multer.File,
-      @Res() res
-    ) {
-      try {
-        const fileBuffer = await fs.promises.readFile(file.path);
-        const fileString = fileBuffer.toString();
-        const newimage = await this.postservice.updateimagebypostid(
-          fileString,
-          req.user.id,
-          postid
-        );
-       
-        res.status(200).json(newimage);
-      } catch (error) {
-        return error;
-      }
+    ): Promise<void> {
+      const filename = await this.postservice.uploadFile(file);
+      await this.postservice.updatePhoto(postid, filename);
     }
+   
 
 
     

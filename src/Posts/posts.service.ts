@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../user/user.schema';
@@ -8,14 +8,18 @@ import { Query } from 'express-serve-static-core';
 import { UserService } from '../user/user.service';
 import { CommentService } from '../comment/comment.service';
 import { PostCommentDto } from '../comment/comment.dto';
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { extname, join } from 'path';
+import * as fileType from 'file-type';
+import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
+import multer, { diskStorage } from 'multer';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel('Posts') private readonly postModel: Model<Posts>,
     private commentservice: CommentService,
-    private cloudiaryservice: CloudinaryService,
   ) {}
 
   async createPost(createPostDto: PostDto, author: User): Promise<Posts> {
@@ -30,21 +34,59 @@ export class PostsService {
     }
   }
 
-  async updateimagebypostid(
-    postid: string,
-    fileString: Express.Multer.File,
-    userid: string,
-  ) {
-    try {
-      const updatepostimage = await this.postModel.findOneAndUpdate({
-        author: userid,
-        _id: postid,
-      });
-      return await this.cloudiaryservice.uploadimage(fileString);
-    } catch (error) {
-      return error;
+
+
+  
+
+  async uploadFile(file: Express.Multer.File): Promise<string> {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    const extension = extname(file.originalname).toLowerCase();
+
+    if (!allowedExtensions.includes(extension)) {
+      throw new BadRequestException(
+        'Only images with the following extensions are allowed: ' +
+          allowedExtensions.join(', '),
+      );
     }
+
+    const fileInfo = await fileType.fromBuffer(file.buffer);
+
+    if (!fileInfo || !fileInfo.mime.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed');
+    }
+    if (!fs.existsSync('public')) {
+      fs.mkdirSync('public');
+    }
+
+    const filename = uuidv4() + extension;
+    const filePath = `public/${filename}`;
+
+    const writeStream = fs.createWriteStream(filePath);
+    writeStream.write(file.buffer);
+    writeStream.end();
+
+    return filename;
   }
+
+  async updatePhoto(postId: string, photoUrl: string): Promise<Posts> {
+    if (!postId) {
+      throw new Error(`Post ID is missing`);
+    }
+  
+    const post = await this.postModel.findById(postId);
+  
+    if (!post) {
+      throw new Error(`Post with ID ${postId} not found`);
+    }
+  
+    post.postImage = photoUrl;
+    return post.save();
+  }
+  
+  
+
+
+
 
   async fetchallpost():Promise<PostDocument[]>{
     return await this.postModel.find({})

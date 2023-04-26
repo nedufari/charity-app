@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { User, UserDocument } from "./user.schema";
@@ -8,6 +8,10 @@ import { UpdateUserDto } from "./user.dto";
 import {Query} from "express-serve-static-core"
 import { of } from "rxjs";
 import { Roles } from "./roles.enum";
+import { extname } from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import * as fs from 'fs';
+import * as fileType from 'file-type';
 
 @Injectable()
 export class UserService{
@@ -39,8 +43,12 @@ async updateuser(id: string, dto: UpdateUserDto): Promise<UserDocument> {
   }
   
 async deleteuser(id:string){
-    let user = await this.usermodel.findOneAndDelete({_id:id})
-    if (!user) throw new HttpException(`user with id ${id} is not found `, HttpStatus.NOT_FOUND)
+    const user = await this.finduserByid(id)
+    if (!user) throw new HttpException(`user with id ${id} does not exist`,HttpStatus.NOT_FOUND)
+    const deleteuser= await this.usermodel.findByIdAndUpdate(user)
+    return HttpStatus.NO_CONTENT
+    
+    
     return HttpStatus.NO_CONTENT
 }
 
@@ -84,6 +92,51 @@ async deleteuser(id:string){
     async getalluser():Promise<UserDocument[]>{
         return await this.usermodel.find({}).populate("posts").exec()
      }
+
+     async uploadFile(file: Express.Multer.File): Promise<string> {
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+        const extension = extname(file.originalname).toLowerCase();
+    
+        if (!allowedExtensions.includes(extension)) {
+          throw new BadRequestException(
+            'Only images with the following extensions are allowed: ' +
+              allowedExtensions.join(', '),
+          );
+        }
+    
+        const fileInfo = await fileType.fromBuffer(file.buffer);
+    
+        if (!fileInfo || !fileInfo.mime.startsWith('image/')) {
+          throw new BadRequestException('Only image files are allowed');
+        }
+        if (!fs.existsSync('public')) {
+          fs.mkdirSync('public');
+        }
+    
+        const filename = uuidv4() + extension;
+        const filePath = `public/${filename}`;
+    
+        const writeStream = fs.createWriteStream(filePath);
+        writeStream.write(file.buffer);
+        writeStream.end();
+    
+        return filename;
+      }
+    
+      async updatePhoto(Id: string, photoUrl: string): Promise<User> {
+        if (!Id) {
+          throw new Error(`user ID is missing`);
+        }
+      
+        const post = await this.usermodel.findById(Id);
+      
+        if (!post) {
+          throw new Error(`Post with ID ${Id} not found`);
+        }
+      
+        post.imagePath = photoUrl;
+        return post.save();
+      }
 
    
 

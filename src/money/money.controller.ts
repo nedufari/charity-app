@@ -20,24 +20,16 @@ export class MoneyController{
 
     }
 
+   
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.DONATORS)
-    @Patch("/upload/reciept/:postid")
+    @Role(Roles.DONATORS,)
+    @Patch("/upload/:donationid")
     @UseInterceptors(FileInterceptor('file'))
-    async uploadpaymentrecieptbypostid(
-      @Req() req,
-      @Param("donationid") donationid: string,
+    async updatePostPhoto(
+      @Param('donationid') donationid: string,
       @UploadedFile() file: Express.Multer.File,
-      @Res() res
-    ) {
-      try {
-        const fileBuffer = await fs.promises.readFile(file.path);
-        const fileString = fileBuffer.toString();
-        const newimage = await this.moneyservice.uploadrecipt(file,donationid,req.user.id)
-        
-        res.status(200).json({newimage,"info":"reciept for payment has been successfully uploaded, that you so much for the donations"});
-      } catch (error) {
-        return error;
-      }
+    ): Promise<void> {
+      const filename = await this.moneyservice.uploadFile(file);
+      await this.moneyservice.updatePhoto(donationid, filename);
     }
 }
