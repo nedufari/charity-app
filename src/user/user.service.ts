@@ -134,7 +134,7 @@ async deleteuser(id:string){
           throw new Error(`Post with ID ${Id} not found`);
         }
       
-        const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
+        const photoUrl =`https://charity-app.up.railway.app/public/${filename}`
   
         post.imagePath = photoUrl;
         return post.save();

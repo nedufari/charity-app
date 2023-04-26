@@ -70,7 +70,7 @@ export class MoneyService {
     if (!post) {
       throw new Error(`Post with ID ${donationId} not found`);
     }
-    const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
+    const photoUrl =`https://charity-app.up.railway.app/public/${filename}`
   
     post.reciept = photoUrl;
     return post.save();

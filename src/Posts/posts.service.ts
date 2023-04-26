@@ -79,7 +79,7 @@ export class PostsService {
       throw new Error(`Post with ID ${postId} not found`);
     }
 
-    const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
+    const photoUrl =`https://charity-app.up.railway.app/public/${filename}`
   
     post.postImage = photoUrl;
     return post.save();
@@ -169,7 +169,7 @@ export class PostsService {
     }
   }
 
-  
+
 
   async addComment(author: User, postId: string, commentdto: PostCommentDto) {
     try {
