@@ -123,7 +123,7 @@ async deleteuser(id:string){
         return filename;
       }
     
-      async updatePhoto(Id: string, photoUrl: string): Promise<User> {
+      async updatePhoto(Id: string, filename: string): Promise<User> {
         if (!Id) {
           throw new Error(`user ID is missing`);
         }
@@ -134,6 +134,8 @@ async deleteuser(id:string){
           throw new Error(`Post with ID ${Id} not found`);
         }
       
+        const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
+  
         post.imagePath = photoUrl;
         return post.save();
       }

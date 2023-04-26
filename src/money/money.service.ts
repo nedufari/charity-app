@@ -60,7 +60,7 @@ export class MoneyService {
     return filename;
   }
 
-  async updatePhoto(donationId: string, photoUrl: string): Promise<Money> {
+  async updatePhoto(donationId: string, filename: string): Promise<Money> {
     if (!donationId) {
       throw new Error(`Post ID is missing`);
     }
@@ -70,6 +70,7 @@ export class MoneyService {
     if (!post) {
       throw new Error(`Post with ID ${donationId} not found`);
     }
+    const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
   
     post.reciept = photoUrl;
     return post.save();

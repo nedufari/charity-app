@@ -61,7 +61,7 @@ export class ReliefMaterialService{
         return filename;
       }
     
-      async updatePhoto(reliefId: string, photoUrl: string): Promise<ReliefMAterial> {
+      async updatePhoto(reliefId: string, filename: string): Promise<ReliefMAterial> {
         if (!reliefId) {
           throw new Error(`Post ID is missing`);
         }
@@ -72,6 +72,8 @@ export class ReliefMaterialService{
           throw new Error(`Post with ID ${reliefId} not found`);
         }
       
+        const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
+  
         post.image = photoUrl;
         return post.save();
       }

@@ -68,7 +68,7 @@ export class PostsService {
     return filename;
   }
 
-  async updatePhoto(postId: string, photoUrl: string): Promise<Posts> {
+  async updatePhoto(postId: string, filename: string): Promise<Posts> {
     if (!postId) {
       throw new Error(`Post ID is missing`);
     }
@@ -78,6 +78,8 @@ export class PostsService {
     if (!post) {
       throw new Error(`Post with ID ${postId} not found`);
     }
+
+    const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
   
     post.postImage = photoUrl;
     return post.save();
@@ -89,8 +91,18 @@ export class PostsService {
 
 
   async fetchallpost():Promise<PostDocument[]>{
-    return await this.postModel.find({})
+    return await this.postModel.find().populate([
+      'author',
+      'comments',
+      'bloodDonations',
+      'MoneyDonations',
+      'ReliefMaterials',
+    ])
   }
+
+
+
+
 
   async findall(query: Query): Promise<PostDocument[]> {
     //pagiation
@@ -120,9 +132,9 @@ export class PostsService {
       .populate([
         'author',
         'comments',
-        'blooddonations',
-        'moneydonations',
-        'reliefmaterialdonations',
+        'bloodDonations',
+        'MoneyDonations',
+        'ReliefMaterials',
       ])
       .exec();
   }
@@ -156,6 +168,8 @@ export class PostsService {
       throw error;
     }
   }
+
+  
 
   async addComment(author: User, postId: string, commentdto: PostCommentDto) {
     try {
