@@ -166,7 +166,7 @@ export class PostsController{
       @UploadedFile() file: Express.Multer.File,
     ): Promise<void> {
       const filename = await this.postservice.uploadFile(file);
-      await this.postservice.updatePhoto(postid, filename);
+      await this.postservice.updatePhoto(postid, filename)
     }
    
 
