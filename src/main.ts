@@ -2,7 +2,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cors from 'cors'
-import multer from 'multer';
 import * as express from 'express';
 import { join } from 'path';
 
