@@ -1,9 +1,16 @@
+import { IsNotEmpty, IsString } from "class-validator"
 import { Date } from "mongoose"
 
-export class ReliefMaterialDto{ //update
+export class ReliefMaterialDto{ 
+    
+    @IsString()
+    @IsNotEmpty()
     description:string 
+
+    @IsString()
     image:string
-    date:Date
+
+
 }
 
 export class ReliefResponse extends ReliefMaterialDto{

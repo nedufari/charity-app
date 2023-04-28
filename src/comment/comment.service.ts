@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
 import { User } from "../user/user.schema";
@@ -56,6 +56,13 @@ export class CommentService{
       }
 
       async findallcommet():Promise<CommentDcument[]>{
-        return await this.commentmodel.find({})
+        return await this.commentmodel.find()
+      }
+
+      async updatecomment(id: string, dto: PostCommentDto) {
+   
+        let comment = await this.commentmodel.findByIdAndUpdate(id, dto, { new: true });
+        if (!comment) throw new HttpException('comment not found', HttpStatus.NOT_FOUND);
+        return comment.save();
       }
     }

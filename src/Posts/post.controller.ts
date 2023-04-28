@@ -10,8 +10,7 @@ import { Role } from "../auth/guard/role.decorator";
 import { Roles } from "../user/roles.enum";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { PostCommentDto } from "../comment/comment.dto";
-import * as fs from 'fs';
-import { ParseObjectIdPipe } from "./object.service";
+
 
 
 @Controller('posts')
@@ -44,20 +43,20 @@ export class PostsController{
     }
 
 
-    // @Patch("comment/:postid")
-    // @UseGuards(JwtGuard,RoleGuard)
-    // @Role(Roles.AGENCY,Roles.DONATORS)
-    // async updateComment(@Request()req, @Res()res:Response, @Body()comment:PostCommentDto, @Param("postid")postid:string){
-    //     try {
-    //         const newcomment = await this.postservice.updateComment(req.user.id,postid, comment)
+    @Patch("comment/:commentid")
+    @UseGuards(JwtGuard,RoleGuard)
+    @Role(Roles.AGENCY,Roles.DONATORS)
+    async updateComment(@Request()req, @Res()res:Response, @Body()comment:PostCommentDto, @Param("commentid")commentid:string){
+        try {
+            const newcomment = await this.postservice.updateComment(commentid, comment)
             
-    //         return res.status(200).json(newcomment)
+            return res.status(200).json(newcomment)
             
-    //     } catch (error) {
-    //         throw error
+        } catch (error) {
+            throw error
             
-    //     }
-    // }
+        }
+    }
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.ADMIN,Roles.AGENCY,Roles.DONATORS)
@@ -85,7 +84,7 @@ export class PostsController{
 
 
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY, Roles.ADMIN, Roles.DONATORS)
+    @Role(Roles.AGENCY)
     @Post('new')
     async createPost(@Body() post: PostDto, @Res() res:Response, @Request()req:any){
         try {
@@ -105,17 +104,17 @@ export class PostsController{
       }
 
 
-    @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY)
+    // @UseGuards(JwtGuard,RoleGuard)
+    // @Role(Roles.AGENCY)
     @Get('header')
-    async finfAll(@Query()query:ExpressQuery,@Res()res:Response):Promise<PostDocument[]>{
+    async findAll(@Query()query:ExpressQuery,@Res()res:Response):Promise<PostDocument[]>{
       
         return await this.postservice.findall(query)
     }
 
 
-    @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY,Roles.DONATORS)
+    // @UseGuards(JwtGuard,RoleGuard)
+    // @Role(Roles.AGENCY,Roles.DONATORS)
     @Get(':id')
     async finone(@Param("id")id:string, @Res()res:Response):Promise<PostDocument>{
       console.log(this.postservice.findone(id))
@@ -125,7 +124,7 @@ export class PostsController{
 
 
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY,Roles.DONATORS)
+    @Role(Roles.AGENCY)
     @Patch(':id')
     updatePost(@Body() post: PostDto, @Res() res:Response, @Request()req, @Param("postid")postid:string){
         try {
@@ -141,7 +140,7 @@ export class PostsController{
 
 
     @UseGuards(JwtGuard,RoleGuard)
-    @Role(Roles.AGENCY)
+    @Role(Roles.AGENCY,Roles.ADMIN)
     @Delete(":postid")
     async deletePost(
         @Res() res: Response,@Request() req,@Param('postId') postId: string,) {

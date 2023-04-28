@@ -189,14 +189,10 @@ export class PostsService {
     }
   }
 
-  async updateComment(userId: User, postId: string, comment: PostCommentDto) {
+  async updateComment( commentid: string, comment: PostCommentDto) {
     try {
-      const finsfirst = await this.postModel.find({
-        ... comment,
-        userId,
-        postId,
-      }) 
-      const commentupdate= await this.commentservice.postComment(userId,postId,comment)
+     
+      const commentupdate= await this.commentservice.updatecomment(commentid,comment)
       return commentupdate
      
       

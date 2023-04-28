@@ -72,7 +72,7 @@ export class ReliefMaterialService{
           throw new Error(`Post with ID ${reliefId} not found`);
         }
       
-        const photoUrl =`https://charity-app.up.railway.app//public/${filename}`
+        const photoUrl =`https://charity-app.up.railway.app/public/${filename}`
   
         post.image = photoUrl;
         return post.save();
