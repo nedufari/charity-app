@@ -50,6 +50,7 @@ export class Posts{
     @Prop({type:ReliefMAterial})
     @Type(()=>ReliefMAterial)
     ReliefMaterials:ReliefMAterial[]
+    
 
 
         

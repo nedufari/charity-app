@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../user/user.schema';
@@ -19,7 +19,9 @@ import multer, { diskStorage } from 'multer';
 export class PostsService {
   constructor(
     @InjectModel('Posts') private readonly postModel: Model<Posts>,
+    @InjectModel('Comment') private readonly commentModel: Model<Comment>,
     private commentservice: CommentService,
+    
   ) {}
 
   async createPost(createPostDto: PostDto, author: User): Promise<Posts> {
@@ -90,15 +92,19 @@ export class PostsService {
 
 
 
-  async fetchallpost():Promise<PostDocument[]>{
-    return await this.postModel.find().populate([
-      'author',
-      'comments',
-      'bloodDonations',
-      'MoneyDonations',
-      'ReliefMaterials',
-    ])
+  async fetchAllPost(page = 1, limit = 10): Promise<PostDocument[]> {
+    const skip = (page - 1) * limit;
+    console.log("before find() method")
+    const posts = await this.postModel
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .exec();
+      console.log("after find()method")
+      return posts
   }
+  
+
 
 
 
@@ -126,17 +132,11 @@ export class PostsService {
       .exec();
   }
 
-  async findone(id: string): Promise<PostDocument> {
-    return await this.postModel
-      .findById(id)
-      .populate([
-        'author',
-        'comments',
-        'bloodDonations',
-        'MoneyDonations',
-        'ReliefMaterials',
-      ])
-      .exec();
+  async fetchonePost(id:string): Promise<PostDocument> {
+    const post = await this.postModel
+    .findOne()
+    return post
+      
   }
 
   updatePost(postid: string, updatedto: UpdateDto, userid: User) {
@@ -153,21 +153,17 @@ export class PostsService {
     }
   }
 
-  async deletePost(postid: string, userid: string) {
-    try {
-      const findpost = await this.postModel.findById(postid);
-      const deletecomment = this.commentservice.deleteCommentsByIds(
-        findpost.comments,
-      );
-      const deletedpost = await this.postModel.findByIdAndDelete({
-        _id: postid,
-        author: userid,
-      });
-      return deletedpost;
-    } catch (error) {
-      throw error;
-    }
+// post.service.ts
+
+async deletePost(id: string) {
+  const post = await this.postModel.findById(id);
+  if (!post) {
+    throw new NotFoundException(`Post with ID ${id} not found`);
   }
+  await this.commentModel.deleteMany({ post: post._id });
+  return await post.deleteOne();
+}
+
 
 
 

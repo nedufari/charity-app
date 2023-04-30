@@ -9,8 +9,7 @@ import { LoginDto, SignupDto } from "./dto/signup.dto";
 export class AuthController{
     constructor(private authservice:AuthService){}
 
-    @Post('signup')
-    @HttpCode(HttpStatus.CREATED)     
+    @Post('signup')    
     async register(@Body()user:SignupDto,):Promise<UserDocument>{
         try {
             console.log(this.authservice.Register(user))

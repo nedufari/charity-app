@@ -29,6 +29,8 @@ import { AppController } from './app.controller';
 })
 export class AppModule {}
 
+
+
 //in mogo we use object document mapper (odm) because it is not a relational database while relational uses orm (object relationals mapper)
 
 // MongooseModule.forRoot("mongodb://mongo:BPyjxQFIwylyURAYC0sR@containers-us-west-43.railway.app:6531")],

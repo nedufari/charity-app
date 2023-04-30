@@ -19,7 +19,7 @@ export class User {
     @Prop({required:true})
     fullname:string
 
-    @Prop({unique:true,required:true})
+    @Prop({required:true})
     email:string
 
     @Prop({required:true})

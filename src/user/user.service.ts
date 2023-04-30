@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { User, UserDocument } from "./user.schema";
@@ -25,8 +25,8 @@ export class UserService{
     }
 
 
-   async finduserByemail(email:string):Promise<UserDocument|null>{
-        return await this.usermodel.findOne({email}).exec()
+   async finduserByemail(email:string):Promise<UserDocument>{
+        return await this.usermodel.findOne({email})
    }
 
    async finduserByid(id:string):Promise<UserDocument|null>{
@@ -42,15 +42,8 @@ async updateuser(id: string, dto: UpdateUserDto): Promise<UserDocument> {
     return user.save();
   }
   
-async deleteuser(id:string){
-    const user = await this.finduserByid(id)
-    if (!user) throw new HttpException(`user with id ${id} does not exist`,HttpStatus.NOT_FOUND)
-    const deleteuser= await this.usermodel.findByIdAndUpdate(user)
-    return HttpStatus.NO_CONTENT
-    
-    
-    return HttpStatus.NO_CONTENT
-}
+
+  
 
    async searchuser(query:Query):Promise<UserDocument[]>{
 
@@ -89,9 +82,29 @@ async deleteuser(id:string){
         return await  this.usermodel.find({...keyword}).skip(skip).limit(respage).exec()
     }
 
-    async getalluser():Promise<UserDocument[]>{
-        return await this.usermodel.find({}).populate("posts").exec()
-     }
+    async fetchAlluser(page = 1, limit = 10): Promise<UserDocument[]> {
+    const skip = (page - 1) * limit;
+    console.log("before find() method")
+    const users = await this.usermodel
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .exec();
+      console.log("after find()method")
+      return users
+  }
+
+  async fetchsingleuser(id:string): Promise<UserDocument> {
+    
+    console.log("before find() method")
+    const users = await this.usermodel
+      .findOne()
+      
+      console.log("after find()method")
+      return users
+  }
+
+
 
      async uploadFile(file: Express.Multer.File): Promise<string> {
         const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
@@ -139,6 +152,16 @@ async deleteuser(id:string){
         post.imagePath = photoUrl;
         return post.save();
       }
+
+
+      async deleteuser(id: string) {
+        const user = await this.usermodel.findById(id);
+        if (!user) {
+            throw new NotFoundException(`Post with ID ${id} not found`);
+        }
+  
+        return await user.deleteOne();
+}
 
    
 

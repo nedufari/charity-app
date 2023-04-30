@@ -98,10 +98,12 @@ export class PostsController{
         
       }
 
-      @Get('/allpost')
-      async fetallpost():Promise<PostDocument[]>{
-        return await this.postservice.fetchallpost()
+      @Get("all")
+      async getAllPosts(@Query('page') page: number, @Query('limit') limit: number): Promise<PostDocument[]> {
+        const posts = await this.postservice.fetchAllPost(page, limit);
+        return posts
       }
+      
 
 
     // @UseGuards(JwtGuard,RoleGuard)
@@ -116,16 +118,16 @@ export class PostsController{
     // @UseGuards(JwtGuard,RoleGuard)
     // @Role(Roles.AGENCY,Roles.DONATORS)
     @Get(':id')
-    async finone(@Param("id")id:string, @Res()res:Response):Promise<PostDocument>{
-      console.log(this.postservice.findone(id))
+    async finone(@Param("id")id:string):Promise<PostDocument>{
+      console.log(this.postservice.fetchonePost(id))
        
-        return await this.postservice.findone(id)
+        return await this.postservice.fetchonePost(id)
     }
 
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.AGENCY)
-    @Patch(':id')
+    @Patch(':postid')
     updatePost(@Body() post: PostDto, @Res() res:Response, @Request()req, @Param("postid")postid:string){
         try {
             const newpost =  this.postservice.updatePost(postid,post,req.user.id )
@@ -141,15 +143,16 @@ export class PostsController{
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.AGENCY,Roles.ADMIN)
-    @Delete(":postid")
+    @Delete(":id")
     async deletePost(
-        @Res() res: Response,@Request() req,@Param('postId') postId: string,) {
+        @Param('id') id: string,) {
         try {
-          const newPost = await this.postservice.deletePost(postId, req.user.id);
+          return await this.postservice.deletePost(id);
+         
           
-          res.status(200).json(newPost);
+          
         } catch (error) {
-          res.status(500).json({ message: error.message });
+          
         }
       }
 

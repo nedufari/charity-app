@@ -8,10 +8,11 @@ import { UserService } from "../user/user.service";
 import { UserDetails } from "../user/user.interface";
 import { LoginDto, SignupDto } from "./dto/signup.dto";
 import { JwtService } from "@nestjs/jwt";
+import { MongoError } from "mongodb";
 
 @Injectable()
 export class AuthService{
-    constructor( private userservice:UserService, private jwtservice:JwtService){
+    constructor( private userservice:UserService, private jwtservice:JwtService, @InjectModel("User") private readonly authmodel:Model<UserDocument>){
 
     }
 
@@ -23,21 +24,42 @@ export class AuthService{
         return await bcrypt.compare(password,hashpassword)
     }
 
-    async Register(user:SignupDto):Promise<UserDocument>{
-        const {email,role,password,fullname}=user
 
-        const existingUser= await this.userservice.finduserByemail(email)
-        if (existingUser) throw new HttpException(`email: ${email} is already taken by aother user`,HttpStatus.CONFLICT
-        )
+    async doesUserExist(email: string): Promise<boolean> {
+        const user = await this.authmodel.findOne({email});
+        return !!user;
+      }
 
-        const hahsedpassword = await  this.hashpassword(password)
+      async Register(user: SignupDto): Promise<UserDocument> {
+        try {
+            const { email, role, password, fullname } = user;
+      
+            const userExists = await this.doesUserExist(email);
+            if (userExists) {
+              throw new HttpException(
+                `email: ${email} is already taken by another user`,
+                HttpStatus.CONFLICT
+              );
+            }
+          
+            const hashedPassword = await this.hashpassword(password);
+          
+            const newUser = await this.userservice.create(fullname, email, hashedPassword, role);
+            return await newUser.save();
+            
+        } catch (error) {
+            if (error instanceof HttpException && error.getStatus()=== HttpStatus.CONFLICT){
+                console.log(`user registratio failed: ${error.message}`)
 
-        const newUser  = await this.userservice.create(fullname,email,hahsedpassword,role)
-        // return this.userservice._getUser(newUser) 
-        return newUser.save()
+            }else{
+                throw error
+            }
+            
+        }
+      
+      }
+      
 
-        
-    }
 
     async doesPasswordMatch (password:string, hahsedpassword:string):Promise<boolean>{
         return await this.comparepassword(password,hahsedpassword)

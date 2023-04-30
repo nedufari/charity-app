@@ -46,12 +46,17 @@ export class UserController{
 
     // @UseGuards(JwtGuard)
     //@Role(Roles.ADMIN)
-    @Get('all')
-    async findall():Promise<UserDocument[]>{
-        console.log(this.userservice.getalluser())
-        
-        return await this.userservice.getalluser()
-    }
+    @Get("all")
+      async getAllUsers(@Query('page') page: number, @Query('limit') limit: number): Promise<UserDocument[]> {
+        const posts = await this.userservice.fetchAlluser(page, limit);
+        return posts
+      }
+
+      @Get("one/:id")
+      async getAllPosts(@Param("id")id:string): Promise<UserDocument> {
+        const posts = await this.userservice.fetchsingleuser(id);
+        return posts
+      }
 
     @UseGuards(JwtGuard,RoleGuard)
     @Role(Roles.ADMIN)
@@ -70,6 +75,13 @@ export class UserController{
     ): Promise<void> {
       const filename = await this.userservice.uploadFile(file);
       await this.userservice.updatePhoto(id, filename);
+    }
+
+   
+    @Delete(":id")
+    async delete(@Param("id")id:string,){
+        return await this.userservice.deleteuser(id)
+
     }
 
 

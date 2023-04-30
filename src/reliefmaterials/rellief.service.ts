@@ -76,6 +76,8 @@ export class ReliefMaterialService{
   
         post.image = photoUrl;
         return post.save();
+
+        
       }
 
 
