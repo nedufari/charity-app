@@ -134,7 +134,7 @@ export class PostsService {
 
   async fetchonePost(id:string): Promise<PostDocument> {
     const post = await this.postModel
-    .findOne()
+    .findOne({_id:id})
     return post
       
   }

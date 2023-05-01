@@ -98,7 +98,7 @@ async updateuser(id: string, dto: UpdateUserDto): Promise<UserDocument> {
     
     console.log("before find() method")
     const users = await this.usermodel
-      .findOne()
+      .findOne({_id:id})
       
       console.log("after find()method")
       return users
